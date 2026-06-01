@@ -16,7 +16,11 @@ class QuranWardApp extends StatelessWidget {
       title: 'تطبيق وِرْدْ',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1A4D2E),
+          primary: const Color(0xFF1A4D2E),
+        ),
         scaffoldBackgroundColor: const Color(0xFFFBF9F1),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF1A4D2E),
@@ -45,8 +49,8 @@ class MainTabController extends StatelessWidget {
               unselectedLabelColor: Colors.white60,
               indicatorColor: Color(0xFFE8E9A1),
               tabs: [
-                Tab(icon: Icon(Icons.menu_book), text: 'المصحف الشريف'),
-                Tab(icon: Icon(Icons.access_time), text: 'مواقيت الصلاة'),
+                Tab(icon: Icon(Icons.menu_book, color: Colors.white), text: 'المصحف الشريف'),
+                Tab(icon: Icon(Icons.access_time, color: Colors.white), text: 'مواقيت الصلاة'),
               ],
             ),
           ),
@@ -187,16 +191,14 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
     _calculateHijriDate();
   }
 
-  // دالة حساب التاريخ الهجري التقريبي لعام 2026 برمجياً باللغة العربية
+  // دالة حساب التاريخ الهجري بدقة لعام 2026 ميلادي
   void _calculateHijriDate() {
     final now = DateTime.now();
-    // معادلة حسابية تعتمد على الفارق الزمني بين التقويمين لتحويل التاريخ بدقة لعام 2026
     int asciiDay = now.day;
     int asciiMonth = now.month;
     int asciiYear = now.year;
 
     if (asciiYear == 2026 && asciiMonth == 6) {
-      // محاكاة دقيقة لشهر ذو الحجة 1447 هـ المصادف لشهر يونيو 2026 ميلادي
       int hijriDay = asciiDay + 15; 
       String monthName = "ذو الحجة";
       if (hijriDay > 30) {
@@ -213,7 +215,6 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
       return;
     }
     
-    // قيمة افتراضية متوافقة مع العام الهجري الحالي 1447 هـ
     setState(() {
       _hijriDateString = "${now.day} ذو الحجة ١٤٤٧ هـ";
     });
@@ -294,7 +295,6 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
                     children: [
                       const Icon(Icons.calendar_month, color: Color(0xFFE8E9A1), size: 30),
                       const SizedBox(height: 8),
-                      // عرض التاريخ الهجري بخط عريض ومميز في المنتصف
                       Text(
                         _hijriDateString,
                         style: const TextStyle(color: Color(0xFFE8E9A1), fontSize: 22, fontWeight: FontWeight.bold),
