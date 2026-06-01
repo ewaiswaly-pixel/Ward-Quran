@@ -19,17 +19,28 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create and Override Project
+      - name: Create Project and Inject Permissions
         run: |
-          # إنشاء المشروع وضبط الهوية الرسمية للتطبيق
+          # إنشاء التطبيق بهويته الرسمية
           flutter create --org com.ewais.ward --template=app quran_ward_app
+          
+          # إضافة مكتبات الأذان والموقع تلقائياً دون تعديل ملفات يدوية
+          cd quran_ward_app
+          flutter pub add adhan geolocator
+          
+          # زراعة صلاحيات الـ GPS والأذان تلقائياً داخل ملف الأندرويد لعام 2026
+          MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+          PERMISSIONS='<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.WAKE_LOCK" />\n    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />'
+          sed -i "s|<manifest[^>]*>|&\n    $PERMISSIONS|" $MANIFEST_PATH
+          
+          # نقل كود الواجهة الرئيسي الخاص بنا إلى المشروع الجديد
+          cd ..
           rm -f quran_ward_app/lib/main.dart
           cp lib/main.dart quran_ward_app/lib/main.dart
 
-      - name: Build Laser Focused APK
+      - name: Build Comprehensive APK
         run: |
           cd quran_ward_app
-          # أمر بناء ذكي وموجه مباشرة لمعمارية الهواتف الحديثة لتخطي عقبات التجميع
           flutter build apk --debug --target-platform android-arm64
 
       - name: Upload APK Artifact
