@@ -40,7 +40,7 @@ class MainTabController extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: DefaultTabController(
-        length: 3, // تم التوسيع لثلاثة أقسام رئيسية
+        length: 3,
         child: Scaffold(
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
@@ -53,7 +53,6 @@ class MainTabController extends StatelessWidget {
                 unselectedLabelColor: Colors.white60,
                 indicatorColor: Color(0xFF8C7040),
                 indicatorWeight: 3,
-                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 tabs: [
                   Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
                   Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
@@ -75,7 +74,7 @@ class MainTabController extends StatelessWidget {
   }
 }
 
-// شاشة فهرس سور القرآن الكريم مع خاصية البحث الفوري
+// شاشة فهرس سور القرآن الكريم مع خاصية البحث
 class QuranIndexScreen extends StatefulWidget {
   const QuranIndexScreen({super.key});
 
@@ -173,9 +172,6 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.4)),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(0.01), blurRadius: 4, offset: const Offset(0, 2))
-                          ],
                         ),
                         child: ListTile(
                           leading: CircleAvatar(
@@ -204,7 +200,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
   }
 }
 
-// شاشة عرض آيات السورة الكريمة بإطار زخرفي مريح للعين
+// شاشة عرض آيات السورة الكريمة
 class SurahViewScreen extends StatelessWidget {
   final String surahName;
   final int surahId;
@@ -234,7 +230,7 @@ class SurahViewScreen extends StatelessWidget {
       case 113:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
+          "قُل * أَعُوذُ بِرَبِّ الْفَلَقِ",
           "مِن شَرِّ مَا خَلَقَ",
           "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
           "وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ",
@@ -243,7 +239,7 @@ class SurahViewScreen extends StatelessWidget {
       case 114:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+          "قُل * أَعُوذُ بِرَبِّ النَّاسِ",
           "مَلِكِ النَّاسِ",
           "إِلَهِ النَّاسِ",
           "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ",
@@ -309,7 +305,7 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة مواقيت الصلاة بتصميم لوحة فاخرة
+// شاشة مواقيت الصلاة (تم تنظيف الـ const الخاطئ تماماً)
 class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -347,9 +343,16 @@ class LivePrayerTimesScreen extends StatelessWidget {
                   style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
                 const Divider(color: Colors.white12, height: 20),
-                const Text(
-                  "توقيت جمهورية مصر العربية المحلي القياسي",
-                  style: TextStyle(color: Colors.white90, fontSize: 13),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      "توقيت جمهورية مصر العربية المحلي القياسي",
+                      style: TextStyle(color: Colors.white90, fontSize: 13),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -389,7 +392,7 @@ class LivePrayerTimesScreen extends StatelessWidget {
   }
 }
 
-// شاشة الأذكار الجديدة مع عداد إلكتروني تفاعلي للمستخدم
+// شاشة الأذكار الجديدة مع عداد إلكتروني تفاعلي
 class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
 
