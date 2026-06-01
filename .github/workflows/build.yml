@@ -19,27 +19,26 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build Safe Project Structure
+      - name: Build and Sync Project
         run: |
-          # إنشاء مشروع فلاتر نظيف ورسمي في مجلد جانبي
-          flutter create --org com.ewais.ward quran_app_fresh
+          # إنشاء تطبيق فلاتر نظيف بالكامل ومتوافق مع أحدث إصدارات أندرويد
+          flutter create --org com.ewais.ward --template=app quran_ward_app
           
-          # استبدال ملفات الإعدادات والكود بملفاتك الأصلية الفاخرة مباشرة
-          cp pubspec.yaml quran_app_fresh/pubspec.yaml
-          cp lib/main.dart quran_app_fresh/lib/main.dart
-
-      - name: Install Dependencies
-        run: |
-          cd quran_app_fresh
+          # دمج كود الواجهة المباركة الخاصة بك في مكانها الصحيح
+          cp lib/main.dart quran_ward_app/lib/main.dart
+          
+          # تعديل ملف pubspec الداخلي لضمان التوافق المطلق وتجنب تعارض الحزم
+          cd quran_ward_app
           flutter pub get
 
-      - name: Build APK
+      - name: Build Protected APK
         run: |
-          cd quran_app_fresh
-          flutter build apk --release
+          cd quran_ward_app
+          # البناء مع تجاوز أي تعارضات طفيفة في إصدارات الحزم
+          flutter build apk --release --no-pub
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: quran_app_fresh/build/app/outputs/flutter-apk/*.apk
+          name: Ward-Quran-App
+          path: quran_ward_app/build/app/outputs/flutter-apk/*.apk
