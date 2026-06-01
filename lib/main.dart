@@ -24,6 +24,7 @@ class QuranWardApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFFBF9F1),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF1A4D2E),
+          foregroundColor: Colors.white,
           elevation: 2,
         ),
       ),
@@ -84,7 +85,7 @@ class QuranIndexScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: ListView.builder(
@@ -149,7 +150,7 @@ class SurahViewScreen extends StatelessWidget {
     final verses = getSurahVerses(surahId);
     return Scaffold(
       appBar: AppBar(
-        title: Text('سورة $surahName', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('سورة $surahName', style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: ListView.builder(
@@ -159,7 +160,7 @@ class SurahViewScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              verses[index] + " ﴿${index + 1}﴾",
+              "${verses[index]} ﴿${index + 1}﴾",
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Color(0xFF2C3E50), height: 1.8),
               textAlign: TextAlign.justify,
             ),
@@ -170,7 +171,7 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة حساب مواقيت الصلاة والتاريخ الهجري الحي
+// شاشة حساب مواقيت الصلاة والتاريخ الهجري
 class LivePrayerTimesScreen extends StatefulWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -191,7 +192,6 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
     _calculateHijriDate();
   }
 
-  // دالة حساب وعرض التاريخ الهجري بدقة برمجية
   void _calculateHijriDate() {
     final now = DateTime.now();
     int asciiDay = now.day;
@@ -246,7 +246,7 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
     }
 
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low);
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low));
     
     _calculatePrayerTimes(position.latitude, position.longitude);
   }
