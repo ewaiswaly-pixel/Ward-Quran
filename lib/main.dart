@@ -14,7 +14,6 @@ class QuranWardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        // ألوان مستوحاة من المصحف الشريف (الأخضر الذهبي والبيج الملكي)
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF0F4C3A),
           primary: const Color(0xFF0F4C3A),
@@ -22,10 +21,10 @@ class QuranWardApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFFAF7F0),
         appBarTheme: const AppBarTheme(
-          backgroundColor: const Color(0xFF0F4C3A),
-          foregroundColor: const Color(0xFFE5D5B6),
+          backgroundColor: Color(0xFF0F4C3A),
+          foregroundColor: Color(0xFFE5D5B6),
           elevation: 3,
-          shadowColor: Colors.black26,
+          centerTitle: true,
         ),
       ),
       home: const MainTabController(),
@@ -41,7 +40,7 @@ class MainTabController extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: DefaultTabController(
-        length: 2,
+        length: 3, // تم التوسيع لثلاثة أقسام رئيسية
         child: Scaffold(
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
@@ -54,9 +53,11 @@ class MainTabController extends StatelessWidget {
                 unselectedLabelColor: Colors.white60,
                 indicatorColor: Color(0xFF8C7040),
                 indicatorWeight: 3,
+                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 tabs: [
-                  Tab(icon: Icon(Icons.menu_book), text: 'المصحف الشريف'),
-                  Tab(icon: Icon(Icons.calendar_today), text: 'الآذان والمواقيت'),
+                  Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
+                  Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
+                  Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'الأذكار'),
                 ],
               ),
             ),
@@ -65,6 +66,7 @@ class MainTabController extends StatelessWidget {
             children: [
               QuranIndexScreen(),
               LivePrayerTimesScreen(),
+              AzkarScreen(),
             ],
           ),
         ),
@@ -73,11 +75,16 @@ class MainTabController extends StatelessWidget {
   }
 }
 
-// شاشة فهرس سور القرآن الكريم المطور مع لمسة جمالية
-class QuranIndexScreen extends StatelessWidget {
+// شاشة فهرس سور القرآن الكريم مع خاصية البحث الفوري
+class QuranIndexScreen extends StatefulWidget {
   const QuranIndexScreen({super.key});
 
-  static const List<Map<String, dynamic>> quranSuwar = [
+  @override
+  State<QuranIndexScreen> createState() => _QuranIndexScreenState();
+}
+
+class _QuranIndexScreenState extends State<QuranIndexScreen> {
+  final List<Map<String, dynamic>> _allSuwar = [
     {"id": 1, "name": "الفاتحة", "type": "مكية", "verses": 7},
     {"id": 2, "name": "البقرة", "type": "مدنية", "verses": 286},
     {"id": 3, "name": "آل عمران", "type": "مدنية", "verses": 200},
@@ -89,70 +96,115 @@ class QuranIndexScreen extends StatelessWidget {
     {"id": 114, "name": "الناس", "type": "مكية", "verses": 6},
   ];
 
+  List<Map<String, dynamic>> _filteredSuwar = [];
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredSuwar = _allSuwar;
+  }
+
+  void _runFilter(String enteredKeyword) {
+    List<Map<String, dynamic>> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = _allSuwar;
+    } else {
+      results = _allSuwar
+          .where((surah) => surah["name"].contains(enteredKeyword))
+          .toList();
+    }
+
+    setState(() {
+      _filteredSuwar = results;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
-        centerTitle: true,
+        title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        itemCount: quranSuwar.length,
-        itemBuilder: (context, index) {
-          final surah = quranSuwar[index];
-          return Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.5), width: 1),
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 6, offset: const Offset(0, 2))
-              ],
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              leading: Container(
-                width: 42,
-                height: 42,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFFFAF7F0),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) => _runFilter(value),
+              decoration: InputDecoration(
+                hintText: 'ابحث عن اسم السورة...',
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF0F4C3A)),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey),
+                        onPressed: () {
+                          _searchController.clear();
+                          _runFilter('');
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFFE5D5B6)),
                 ),
-                child: Center(
-                  child: Text(
-                    '${surah['id']}',
-                    style: const TextStyle(color: Color(0xFF8C7040), fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFF0F4C3A), width: 1.5),
                 ),
               ),
-              title: Text(
-                surah['name'],
-                style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A)),
-              ),
-              subtitle: Text(
-                '${surah['type']} ❖ آياتها ${surah['verses']}',
-                style: TextStyle(color: Colors.grey[600], fontSize: 13),
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF8C7040)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SurahViewScreen(surahName: surah['name'], surahId: surah['id']),
-                  ),
-                );
-              },
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: _filteredSuwar.isEmpty
+                ? const Center(child: Text('لم يتم العثور على السورة', style: TextStyle(fontSize: 16, color: Colors.grey)))
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    itemCount: _filteredSuwar.length,
+                    itemBuilder: (context, index) {
+                      final surah = _filteredSuwar[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.4)),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withOpacity(0.01), blurRadius: 4, offset: const Offset(0, 2))
+                          ],
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: const Color(0xFFFAF7F0),
+                            child: Text('${surah['id']}', style: const TextStyle(color: Color(0xFF8C7040), fontWeight: FontWeight.bold)),
+                          ),
+                          title: Text(surah['name'], style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A))),
+                          subtitle: Text('${surah['type']} ❖ آياتها ${surah['verses']}', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                          trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF8C7040)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SurahViewScreen(surahName: surah['name'], surahId: surah['id']),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// شاشة عرض آيات السورة الكريمة بإطار زخرفي محاكي للمصحف الشريف
+// شاشة عرض آيات السورة الكريمة بإطار زخرفي مريح للعين
 class SurahViewScreen extends StatelessWidget {
   final String surahName;
   final int surahId;
@@ -212,13 +264,11 @@ class SurahViewScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('سورة $surahName', style: const TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
       ),
       body: SafeArea(
         child: Container(
           margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.all(4),
-          // إطار خارجي يحاكي إطارات صفحات المصحف
           decoration: BoxDecoration(
             color: const Color(0xFFFFFDF9),
             borderRadius: BorderRadius.circular(16),
@@ -228,7 +278,7 @@ class SurahViewScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.5), width: 1),
+              border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.5)),
             ),
             child: SingleChildScrollView(
               child: RichText(
@@ -240,20 +290,11 @@ class SurahViewScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "${verses[index]} ",
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1A1A),
-                            height: 2.3,
-                          ),
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A), height: 2.3),
                         ),
                         TextSpan(
                           text: "﴿${index + 1}﴾ ",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF8C7040),
-                          ),
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: Color(0xFF8C7040)),
                         ),
                       ],
                     );
@@ -268,7 +309,7 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة مواقيت الصلاة بتصميم لوحة حية فاخرة
+// شاشة مواقيت الصلاة بتصميم لوحة فاخرة
 class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -291,39 +332,24 @@ class LivePrayerTimesScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
               ),
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(color: const Color(0xFF0F4C3A).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
-              ],
             ),
             child: Column(
               children: [
-                const Icon(Icons.star_border_purple_500, color: Color(0xFFE5D5B6), size: 28),
+                const Icon(Icons.star_border, color: Color(0xFFE5D5B6), size: 28),
                 const SizedBox(height: 6),
                 const Text(
                   "١٦ ذو الحجة ١٤٤٧ هـ",
-                  style: TextStyle(color: Color(0xFFE5D5B6), fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xFFE5D5B6), fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   "الموافق ميلادياً: $dateString",
-                  style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Divider(color: Colors.white12, height: 1),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      "توقيت جمهورية مصر العربية المحلي",
-                      style: TextStyle(color: Colors.white90, fontSize: 13),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                const Divider(color: Colors.white12, height: 20),
+                const Text(
+                  "توقيت جمهورية مصر العربية المحلي القياسي",
+                  style: TextStyle(color: Colors.white90, fontSize: 13),
                 ),
               ],
             ),
@@ -352,21 +378,103 @@ class LivePrayerTimesScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.03), width: 1),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.01), blurRadius: 4, offset: const Offset(0, 2))
-        ],
+        border: Border.all(color: Colors.black.withOpacity(0.02)),
       ),
       child: ListTile(
         leading: Icon(icon, color: const Color(0xFF8C7040), size: 22),
-        title: Text(
-          name, 
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A)),
-        ),
-        trailing: Text(
-          time,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF8C7040)),
-        ),
+        title: Text(name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A))),
+        trailing: Text(time, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF8C7040))),
+      ),
+    );
+  }
+}
+
+// شاشة الأذكار الجديدة مع عداد إلكتروني تفاعلي للمستخدم
+class AzkarScreen extends StatefulWidget {
+  const AzkarScreen({super.key});
+
+  @override
+  State<AzkarScreen> createState() => _AzkarScreenState();
+}
+
+class _AzkarScreenState extends State<AzkarScreen> {
+  int _counter1 = 0;
+  int _counter2 = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('الأذكار اليومية', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          _buildZikrCard(
+            "سبحان الله وبحمده، عدد خلقه، ورضا نفسه، وزنة عرشه، وميداد كلماته.",
+            "من أذكار الصباح والمساء (٣ مرات)",
+            3,
+            _counter1,
+            () {
+              if (_counter1 < 3) setState(() => _counter1++);
+            },
+            () => setState(() => _counter1 = 0),
+          ),
+          _buildZikrCard(
+            "اللَّهُمَّ عافِني في بَدَني، اللَّهُمَّ عافِني في سَمْعي، اللَّهُمَّ عافِني في بَصَري، لا إلهَ إلَّا أنتَ.",
+            "الدعاء بالعافية والتحصين اليومي (٣ مرات)",
+            3,
+            _counter2,
+            () {
+              if (_counter2 < 3) setState(() => _counter2++);
+            },
+            () => setState(() => _counter2 = 0),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildZikrCard(String text, String subtitle, int target, int current, VoidCallback onTap, VoidCallback onReset) {
+    bool isDone = current >= target;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDone ? const Color(0xFFE8F5E9) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: isDone ? Colors.green.withOpacity(0.5) : const Color(0xFFE5D5B6).withOpacity(0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF2C3E50), height: 1.6)),
+          const SizedBox(height: 8),
+          Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+          const Divider(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton.icon(
+                onPressed: onTap,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isDone ? Colors.grey : const Color(0xFF0F4C3A),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                icon: Icon(isDone ? Icons.check : Icons.touch_app),
+                label: Text(isDone ? "تمت القراءة" : "اضغط للتكرار"),
+              ),
+              Row(
+                children: [
+                  Text("$current / $target", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDone ? Colors.green : const Color(0xFF8C7040))),
+                  const SizedBox(width: 8),
+                  IconButton(icon: const Icon(Icons.refresh, size: 18, color: Colors.grey), onPressed: onReset),
+                ],
+              )
+            ],
+          )
+        ],
       ),
     );
   }
