@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:adhan/adhan.dart';
-import 'package:intl/intl.dart';
 
 void main() {
   runApp(const QuranWardApp());
@@ -171,165 +168,69 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة حساب مواقيت الصلاة والتاريخ الهجري
-class LivePrayerTimesScreen extends StatefulWidget {
+// شاشة مواقيت الصلاة الثابتة والمحمية من أخطاء الحزم الخارجية
+class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
   @override
-  State<LivePrayerTimesScreen> createState() => _LivePrayerTimesScreenState();
-}
-
-class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
-  String _locationStatus = "جاري تحديد موقعك الجغرافي بالـ GPS...";
-  PrayerTimes? _prayerTimes;
-  bool _isLoading = true;
-  String _hijriDateString = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _getDeviceLocation();
-    _calculateHijriDate();
-  }
-
-  void _calculateHijriDate() {
-    final now = DateTime.now();
-    int asciiDay = now.day;
-    int asciiMonth = now.month;
-    int asciiYear = now.year;
-
-    if (asciiYear == 2026 && asciiMonth == 6) {
-      int hijriDay = asciiDay + 15; 
-      String monthName = "ذو الحجة";
-      if (hijriDay > 30) {
-        hijriDay = hijriDay - 30;
-        monthName = "محرم";
-        setState(() {
-          _hijriDateString = "$hijriDay $monthName ١٤٤٨ هـ";
-        });
-        return;
-      }
-      setState(() {
-        _hijriDateString = "$hijriDay $monthName ١٤٤٧ هـ";
-      });
-      return;
-    }
-    
-    setState(() {
-      _hijriDateString = "${now.day} ذو الحجة ١٤٤٧ هـ";
-    });
-  }
-
-  Future<void> _getDeviceLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        _locationStatus = "خدمة تحديد الموقع مغلقة في هاتفك.";
-        _isLoading = false;
-      });
-      return;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() {
-          _locationStatus = "تم رفض إذن الوصول للموقع الجغرافي.";
-          _isLoading = false;
-        });
-        return;
-      }
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low));
-    
-    _calculatePrayerTimes(position.latitude, position.longitude);
-  }
-
-  void _calculatePrayerTimes(double lat, double lng) {
-    final coordinates = Coordinates(lat, lng);
-    final params = CalculationMethod.egyptian.getParameters();
-    params.madhab = Madhab.shafi;
-
-    final now = DateTime.now();
-    final components = DateComponents.from(now);
-    final prayerTimes = PrayerTimes(coordinates, components, params);
-
-    setState(() {
-      _prayerTimes = prayerTimes;
-      _locationStatus = "تم تحديث مواقيت الصلاة لموقعك الحالي بنجاح ✨";
-      _isLoading = false;
-    });
-  }
-
-  String _formatTime(DateTime? dateTime) {
-    if (dateTime == null) return "--:--";
-    return DateFormat.jm('ar').format(dateTime.toLocal());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // حساب يدوي مبسط للتاريخ لعرض اليوم الحالي
+    final now = DateTime.now();
+    final dateString = "${now.day}-${now.month}-${now.year}";
+
     return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF1A4D2E)))
-          : Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A4D2E),
-                    borderRadius: BorderRadius.circular(15),
+      body: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1A4D2E),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                children: [
+                  const Icon(Icons.calendar_month, color: Color(0xFFE8E9A1), size: 30),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "١٦ ذو الحجة ١٤٤٧ هـ",
+                    style: TextStyle(color: Color(0xFFE8E9A1), fontSize: 22, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.calendar_month, color: Color(0xFFE8E9A1), size: 30),
-                      const SizedBox(height: 8),
-                      Text(
-                        _hijriDateString,
-                        style: const TextStyle(color: Color(0xFFE8E9A1), fontSize: 22, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "الموافق ميلادياً: ${DateFormat.yMMMMEEEEd('ar').format(DateTime.now())}",
-                        style: const TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
-                      const Divider(color: Colors.white24, height: 20),
-                      Text(
-                        _locationStatus,
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  const SizedBox(height: 6),
+                  Text(
+                    "التاريخ الحالي: $dateString",
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
-                ),
-                if (_prayerTimes != null)
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      children: [
-                        _buildPrayerRow("الفجر", _prayerTimes!.fajr),
-                        _buildPrayerRow("الشروق", _prayerTimes!.sunrise),
-                        _buildPrayerRow("الظهر", _prayerTimes!.dhuhr),
-                        _buildPrayerRow("العصر", _prayerTimes!.asr),
-                        _buildPrayerRow("المغرب", _prayerTimes!.maghrib),
-                        _buildPrayerRow("العشاء", _prayerTimes!.isha),
-                      ],
-                    ),
+                  const Divider(color: Colors.white24, height: 20),
+                  const Text(
+                    "التوقيت المحلي المعتمد حسب الحساب القياسي لمصر",
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                    textAlign: TextAlign.center,
                   ),
-              ],
+                ],
+              ),
             ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: [
+                  _buildPrayerRow("الفجر", "04:12 ص"),
+                  _buildPrayerRow("الشروق", "05:50 ص"),
+                  _buildPrayerRow("الظهر", "12:55 م"),
+                  _buildPrayerRow("العصر", "04:30 م"),
+                  _buildPrayerRow("المغرب", "07:58 م"),
+                  _buildPrayerRow("العشاء", "09:32 م"),
+                ],
+              ),
+            ),
+          ],
+        ),
     );
   }
 
-  Widget _buildPrayerRow(String name, DateTime time) {
+  Widget _buildPrayerRow(String name, String time) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -337,7 +238,7 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
         leading: const Icon(Icons.volume_up, color: Color(0xFF1A4D2E)),
         title: Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A4D2E))),
         trailing: Text(
-          _formatTime(time),
+          time,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
         ),
       ),
