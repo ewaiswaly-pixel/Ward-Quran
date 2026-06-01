@@ -74,7 +74,7 @@ class MainTabController extends StatelessWidget {
   }
 }
 
-// شاشة فهرس سور القرآن الكريم مع خاصية البحث
+// شاشة فهرس سور القرآن الكريم مع خاصية البحث الفوري
 class QuranIndexScreen extends StatefulWidget {
   const QuranIndexScreen({super.key});
 
@@ -200,7 +200,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
   }
 }
 
-// شاشة عرض آيات السورة الكريمة
+// شاشة عرض آيات السورة الكريمة إطار زخرفي
 class SurahViewScreen extends StatelessWidget {
   final String surahName;
   final int surahId;
@@ -212,7 +212,7 @@ class SurahViewScreen extends StatelessWidget {
       case 1:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+          "الْحَمْدُ Lِلَّهِ رَبِّ الْعَالَمِينَ",
           "الرَّحْمَنِ الرَّحِيمِ",
           "مَالِكِ يَوْمِ الدِّينِ",
           "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
@@ -230,7 +230,7 @@ class SurahViewScreen extends StatelessWidget {
       case 113:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُل * أَعُوذُ بِرَبِّ الْفَلَقِ",
+          "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
           "مِن شَرِّ مَا خَلَقَ",
           "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
           "وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ",
@@ -239,7 +239,7 @@ class SurahViewScreen extends StatelessWidget {
       case 114:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُل * أَعُوذُ بِرَبِّ النَّاسِ",
+          "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
           "مَلِكِ النَّاسِ",
           "إِلَهِ النَّاسِ",
           "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ",
@@ -305,7 +305,7 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة مواقيت الصلاة (تم تنظيف الـ const الخاطئ تماماً)
+// شاشة مواقيت الصلاة (تم تصحيح الألوان والـ const تماماً لتخطي مشاكل البناء)
 class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -345,12 +345,12 @@ class LivePrayerTimesScreen extends StatelessWidget {
                 const Divider(color: Colors.white12, height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
-                    SizedBox(width: 4),
+                  children: [
+                    const Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
+                    const SizedBox(width: 4),
                     Text(
                       "توقيت جمهورية مصر العربية المحلي القياسي",
-                      style: TextStyle(color: Colors.white90, fontSize: 13),
+                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13),
                     ),
                   ],
                 ),
@@ -392,7 +392,7 @@ class LivePrayerTimesScreen extends StatelessWidget {
   }
 }
 
-// شاشة الأذكار الجديدة مع عداد إلكتروني تفاعلي
+// شاشة الأذكار المحدثة بـ عداد رقمي إلكتروني تفاعلي
 class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
 
