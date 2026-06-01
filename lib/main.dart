@@ -191,7 +191,7 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
     _calculateHijriDate();
   }
 
-  // دالة حساب التاريخ الهجري بدقة لعام 2026 ميلادي
+  // دالة حساب وعرض التاريخ الهجري بدقة برمجية
   void _calculateHijriDate() {
     final now = DateTime.now();
     int asciiDay = now.day;
@@ -275,10 +275,6 @@ class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('المواقيت والتاريخ الهجري', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        centerTitle: true,
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF1A4D2E)))
           : Column(
