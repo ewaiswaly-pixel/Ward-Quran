@@ -1,35 +1,69 @@
-name: Flutter Build APK
-on: [push, pull_request]
+import 'package:flutter/material.dart';
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+void main() {
+  runApp(const QuranWardApp());
+}
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+class QuranWardApp extends StatelessWidget {
+  const QuranWardApp({super.key});
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'تطبيق وِرْدْ',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        useMaterial-design: true,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
 
-      - name: Check Flutter Doctor
-        run: flutter doctor
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
-      - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release --split-per-abi
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/*.apk
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('تطبيق وِرْدْ لحفظ القرآن'),
+        centerTitle: true,
+        backgroundColor: Colors.green[700],
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.greenAccent],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.menu_book, size: 100, color: Colors.green[800]),
+              const SizedBox(height: 20),
+              Text(
+                'مرحباً بك في تطبيق وِرْدْ',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[900],
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'جاري إعداد واجهة الاختبار والمراجعة الدورية...',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
