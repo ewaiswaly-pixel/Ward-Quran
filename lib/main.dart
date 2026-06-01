@@ -14,15 +14,18 @@ class QuranWardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        // ألوان مستوحاة من المصحف الشريف (الأخضر الذهبي والبيج الملكي)
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1A4D2E),
-          primary: const Color(0xFF1A4D2E),
+          seedColor: const Color(0xFF0F4C3A),
+          primary: const Color(0xFF0F4C3A),
+          secondary: const Color(0xFF8C7040),
         ),
-        scaffoldBackgroundColor: const Color(0xFFFBF9F1),
+        scaffoldBackgroundColor: const Color(0xFFFAF7F0),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1A4D2E),
-          foregroundColor: Colors.white,
-          elevation: 2,
+          backgroundColor: const Color(0xFF0F4C3A),
+          foregroundColor: const Color(0xFFE5D5B6),
+          elevation: 3,
+          shadowColor: Colors.black26,
         ),
       ),
       home: const MainTabController(),
@@ -40,16 +43,22 @@ class MainTabController extends StatelessWidget {
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
-          bottomNavigationBar: const Material(
-            color: Color(0xFF1A4D2E),
-            child: TabBar(
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white60,
-              indicatorColor: Color(0xFFE8E9A1),
-              tabs: [
-                Tab(icon: Icon(Icons.menu_book, color: Colors.white), text: 'المصحف الشريف'),
-                Tab(icon: Icon(Icons.access_time, color: Colors.white), text: 'مواقيت الصلاة'),
-              ],
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+            ),
+            child: const Material(
+              color: Color(0xFF0F4C3A),
+              child: TabBar(
+                labelColor: Color(0xFFE5D5B6),
+                unselectedLabelColor: Colors.white60,
+                indicatorColor: Color(0xFF8C7040),
+                indicatorWeight: 3,
+                tabs: [
+                  Tab(icon: Icon(Icons.menu_book), text: 'المصحف الشريف'),
+                  Tab(icon: Icon(Icons.calendar_today), text: 'الآذان والمواقيت'),
+                ],
+              ),
             ),
           ),
           body: const TabBarView(
@@ -64,7 +73,7 @@ class MainTabController extends StatelessWidget {
   }
 }
 
-// شاشة فهرس سور القرآن الكريم المطور
+// شاشة فهرس سور القرآن الكريم المطور مع لمسة جمالية
 class QuranIndexScreen extends StatelessWidget {
   const QuranIndexScreen({super.key});
 
@@ -84,25 +93,49 @@ class QuranIndexScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
         centerTitle: true,
       ),
       body: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         itemCount: quranSuwar.length,
         itemBuilder: (context, index) {
           final surah = quranSuwar[index];
-          return Card(
-            elevation: 2,
-            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.5), width: 1),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 6, offset: const Offset(0, 2))
+              ],
+            ),
             child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: const Color(0xFFE8E9A1),
-                child: Text('${surah['id']}', style: const TextStyle(color: Color(0xFF1A4D2E), fontWeight: FontWeight.bold)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              leading: Container(
+                width: 42,
+                height: 42,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFFFAF7F0),
+                ),
+                child: Center(
+                  child: Text(
+                    '${surah['id']}',
+                    style: const TextStyle(color: Color(0xFF8C7040), fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                ),
               ),
-              title: Text(surah['name'], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1A4D2E))),
-              subtitle: Text('${surah['type']} - آياتها ${surah['verses']}', style: const TextStyle(color: Colors.grey)),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF1A4D2E)),
+              title: Text(
+                surah['name'],
+                style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A)),
+              ),
+              subtitle: Text(
+                '${surah['type']} ❖ آياتها ${surah['verses']}',
+                style: TextStyle(color: Colors.grey[600], fontSize: 13),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF8C7040)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -119,7 +152,7 @@ class QuranIndexScreen extends StatelessWidget {
   }
 }
 
-// شاشة عرض آيات السورة الكريمة بنصوص حقيقية كاملة
+// شاشة عرض آيات السورة الكريمة بإطار زخرفي محاكي للمصحف الشريف
 class SurahViewScreen extends StatelessWidget {
   final String surahName;
   final int surahId;
@@ -158,7 +191,7 @@ class SurahViewScreen extends StatelessWidget {
       case 114:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُل * أَعُوذُ بِرَبِّ النَّاسِ",
+          "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
           "مَلِكِ النَّاسِ",
           "إِلَهِ النَّاسِ",
           "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ",
@@ -168,7 +201,7 @@ class SurahViewScreen extends StatelessWidget {
       default:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "جاري إضافة النص الكامل والتشكيل لهذه السورة الكريمة في التحديث القادم لـ وِرْدْ..."
+          "جاري تجميع وضبط النص الكامل بالتشكيل والرموز لهذه السورة الكريمة في التحديث القادم لـ وِرْدْ..."
         ];
     }
   }
@@ -181,29 +214,48 @@ class SurahViewScreen extends StatelessWidget {
         title: Text('سورة $surahName', style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Card(
-            elevation: 3,
-            color: const Color(0xFFFFFDF6),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+      body: SafeArea(
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(4),
+          // إطار خارجي يحاكي إطارات صفحات المصحف
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFFDF9),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF8C7040), width: 2),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.5), width: 1),
+            ),
+            child: SingleChildScrollView(
               child: RichText(
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,
                 text: TextSpan(
                   children: List.generate(verses.length, (index) {
                     return TextSpan(
-                      text: "${verses[index]} ﴿${index + 1}﴾ ",
-                      style: const TextStyle(
-                        fontSize: 23,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2C3E50),
-                        height: 2.2,
-                        fontFamily: 'Roboto', // يمكنك استبداله بخط عثماني لاحقاً
-                      ),
+                      children: [
+                        TextSpan(
+                          text: "${verses[index]} ",
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A1A1A),
+                            height: 2.3,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "﴿${index + 1}﴾ ",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF8C7040),
+                          ),
+                        ),
+                      ],
                     );
                   }),
                 ),
@@ -216,7 +268,7 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة مواقيت الصلاة الثابتة والمحمية
+// شاشة مواقيت الصلاة بتصميم لوحة حية فاخرة
 class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -230,30 +282,92 @@ class LivePrayerTimesScreen extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            margin: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A4D2E),
-              borderRadius: BorderRadius.circular(15),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0F4C3A), Color(0xFF166D53)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(color: const Color(0xFF0F4C3A).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
+              ],
             ),
             child: Column(
               children: [
-                const Icon(Icons.calendar_month, color: Color(0xFFE8E9A1), size: 30),
-                const SizedBox(height: 8),
+                const Icon(Icons.star_border_purple_500, color: Color(0xFFE5D5B6), size: 28),
+                const SizedBox(height: 6),
                 const Text(
                   "١٦ ذو الحجة ١٤٤٧ هـ",
-                  style: TextStyle(color: Color(0xFFE8E9A1), fontSize: 22, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Color(0xFFE5D5B6), fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  "التاريخ الحالي: $dateString",
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  "الموافق ميلادياً: $dateString",
+                  style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500),
                 ),
-                const Divider(color: Colors.white24, height: 20),
-                const Text(
-                  "التوقيت المحلي المعتمد حسب الحساب القياسي لمصر",
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                  textAlign: TextAlign.center,
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Divider(color: Colors.white12, height: 1),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      "توقيت جمهورية مصر العربية المحلي",
+                      style: TextStyle(color: Colors.white90, fontSize: 13),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              children: [
+                _buildPrayerRow("الفجر", "04:12 ص", Icons.wb_twilight),
+                _buildPrayerRow("الشروق", "05:50 ص", Icons.wb_sunny_outlined),
+                _buildPrayerRow("الظهر", "12:55 م", Icons.wb_sunny),
+                _buildPrayerRow("العصر", "04:30 م", Icons.cloud_queue),
+                _buildPrayerRow("المغرب", "07:58 م", Icons.nights_stay_outlined),
+                _buildPrayerRow("العشاء", "09:32 م", Icons.nights_stay),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrayerRow(String name, String time, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withOpacity(0.03), width: 1),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.01), blurRadius: 4, offset: const Offset(0, 2))
+        ],
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: const Color(0xFF8C7040), size: 22),
+        title: Text(
+          name, 
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A)),
+        ),
+        trailing: Text(
+          time,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF8C7040)),
+        ),
+      ),
+    );
+  }
+}
