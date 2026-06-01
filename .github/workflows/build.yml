@@ -19,13 +19,26 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Clean and Get Dependencies
+      - name: Create Full Flutter Project Structure
         run: |
-          flutter clean
-          flutter pub get
+          # حفظ كود الواجهة والملفات الأساسية مؤقتاً
+          mv lib/main.dart ./temp_main.dart
+          mv pubspec.yaml ./temp_pubspec.yaml
+          
+          # إعادة إنشاء هيكل المشروع بالكامل وبشكل رسمي
+          rm -rf ./* ./.* 2>/dev/null || true
+          flutter create --org com.ewais.ward quran_ward_app .
+          
+          # استعادة الأكواد الفاخرة الخاصة بك مكان الملفات الافتراضية
+          rm -f pubspec.yaml lib/main.dart
+          mv ./temp_main.dart lib/main.dart
+          mv ./temp_pubspec.yaml pubspec.yaml
+
+      - name: Install Dependencies
+        run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
