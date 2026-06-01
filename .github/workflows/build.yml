@@ -21,21 +21,17 @@ jobs:
 
       - name: Create and Override Project
         run: |
-          # إنشاء مشروع فلاتر نظيف تماماً ومتوافق بنسبة 100%
           flutter create --org com.ewais.ward --template=app quran_ward_app
-          
-          # مسح الملف الافتراضي وزرع كود واجهتك المباركة المصححة
           rm -f quran_ward_app/lib/main.dart
           cp lib/main.dart quran_ward_app/lib/main.dart
 
-      - name: Build Final APK
+      - name: Build Fast Debug APK
         run: |
           cd quran_ward_app
-          # أمر البناء المباشر والآمن لتخطي أي تعارضات في الحزم القديمة
-          flutter build apk --release
+          flutter build apk --debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Ward-Quran-v1
+          name: Ward-Quran-App
           path: quran_ward_app/build/app/outputs/flutter-apk/*.apk
