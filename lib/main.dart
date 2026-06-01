@@ -14,7 +14,7 @@ class QuranWardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
-        useMaterial-design: true,
+        useMaterialDesign: true,
       ),
       home: const HomeScreen(),
     );
@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('تطبيق وِرْدْ لحفظ القرآن'),
         centerTitle: true,
-        backgroundColor: Colors.green[700],
+        backgroundColor: Colors.green,
       ),
       body: Container(
         decoration: const BoxDecoration(
