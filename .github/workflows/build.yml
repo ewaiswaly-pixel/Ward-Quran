@@ -19,26 +19,23 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build and Sync Project
+      - name: Create and Override Project
         run: |
-          # إنشاء تطبيق فلاتر نظيف بالكامل ومتوافق مع أحدث إصدارات أندرويد
+          # إنشاء مشروع فلاتر نظيف تماماً ومتوافق بنسبة 100%
           flutter create --org com.ewais.ward --template=app quran_ward_app
           
-          # دمج كود الواجهة المباركة الخاصة بك في مكانها الصحيح
+          # مسح الملف الافتراضي وزرع كود واجهتك المباركة المصححة
+          rm -f quran_ward_app/lib/main.dart
           cp lib/main.dart quran_ward_app/lib/main.dart
-          
-          # تعديل ملف pubspec الداخلي لضمان التوافق المطلق وتجنب تعارض الحزم
-          cd quran_ward_app
-          flutter pub get
 
-      - name: Build Protected APK
+      - name: Build Final APK
         run: |
           cd quran_ward_app
-          # البناء مع تجاوز أي تعارضات طفيفة في إصدارات الحزم
-          flutter build apk --release --no-pub
+          # أمر البناء المباشر والآمن لتخطي أي تعارضات في الحزم القديمة
+          flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Ward-Quran-App
+          name: Ward-Quran-v1
           path: quran_ward_app/build/app/outputs/flutter-apk/*.apk
