@@ -29,7 +29,7 @@ class QuranWardApp extends StatelessWidget {
 class QuranIndexScreen extends StatelessWidget {
   const QuranIndexScreen({super.key});
 
-  // قائمة السور الـ 114 مرتبة (نموذج شامل ممتد برمجياً)
+  // قائمة السور مرتبة برمجياً
   static const List<Map<String, dynamic>> quranSuwar = [
     {"id": 1, "name": "الفاتحة", "type": "مكية", "verses": 7},
     {"id": 2, "name": "البقرة", "type": "مدنية", "verses": 286},
@@ -77,12 +77,12 @@ class QuranIndexScreen extends StatelessWidget {
               title: Text(
                 surah['name'],
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1A4D2E)),
-                textAlign: Alignment.right == Alignment.center ? TextAlign.center : TextAlign.right,
+                textAlign: TextAlign.right,
               ),
               subtitle: Text(
                 '${surah['type']} - آياتها ${surah['verses']}',
                 style: const TextStyle(color: Colors.grey),
-                textAlign: Alignment.right == Alignment.center ? TextAlign.center : TextAlign.right,
+                textAlign: TextAlign.right,
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF1A4D2E)),
               onTap: () {
@@ -108,7 +108,7 @@ class SurahViewScreen extends StatelessWidget {
 
   const SurahViewScreen({super.key, required this.surahName, required this.surahId});
 
-  // محاكاة سريعة للنص العثماني لكل سورة يتم استدعاؤها
+  // محاكاة مدمجة للنص العثماني الموثوق
   List<String> getSurahVerses(int id) {
     if (id == 1) {
       return [
@@ -116,12 +116,13 @@ class SurahViewScreen extends StatelessWidget {
         "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
         "الرَّحْمَنِ الرَّحِيمِ",
         "مَالِكِ يَوْمِ الدِّينِ",
-        "إِيَّاكَ نَعْبُدُ وإِيَّاكَ نَسْتَعِينُ",
+        "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
         "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
         "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ"
       ];
     } else if (id == 112) {
       return [
+        "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
         "قُلْ هُوَ اللَّهُ أَحَدٌ",
         "اللَّهُ الصَّمَدُ",
         "لَمْ يَلِدْ وَلَمْ يُولَدْ",
@@ -150,8 +151,7 @@ class SurahViewScreen extends StatelessWidget {
           itemCount: verses.length,
           itemBuilder: (context, index) {
             return Padding(
-              finalPadding: const EdgeInsets.symmetric(vertical: 8.0),
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0), // تم تصحيح اسم الخاصية هنا
               child: Text(
                 verses[index] + " ﴿${index + 1}﴾",
                 style: const TextStyle(
@@ -159,7 +159,7 @@ class SurahViewScreen extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF2C3E50),
                   height: 1.8,
-                  fontFamily: 'sans-serif', // يعتمد على خطوط الهاتف الافتراضية الداعمة للتشكيل
+                  fontFamily: 'sans-serif',
                 ),
                 textAlign: TextAlign.justify,
               ),
