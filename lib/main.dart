@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const QuranWardApp());
+  runApp(const MyApp());
 }
 
-class QuranWardApp extends StatelessWidget {
-  const QuranWardApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,53 +14,13 @@ class QuranWardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
-        useMaterialDesign: true, // تم تصحيح الكلمة هنا بدقة هندسية
+        useMaterialDesign: true,
       ),
-      home: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('تطبيق وِرْدْ لحفظ القرآن'),
-        centerTitle: true,
-        backgroundColor: Colors.green,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.greenAccent],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.menu_book, size: 100, color: Colors.green),
-              const SizedBox(height: 20),
-              Text(
-                'مرحباً بك في تطبيق وِرْدْ',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[900],
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'جاري إعداد واجهة الاختبار والمراجعة الدورية...',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            ],
+      home: const Scaffold(
+        body: Center(
+          child: Text(
+            'تطبيق وِرْدْ لحفظ القرآن الكريم',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
           ),
         ),
       ),
