@@ -21,17 +21,19 @@ jobs:
 
       - name: Create and Override Project
         run: |
+          # إنشاء المشروع وضبط الهوية الرسمية للتطبيق
           flutter create --org com.ewais.ward --template=app quran_ward_app
           rm -f quran_ward_app/lib/main.dart
           cp lib/main.dart quran_ward_app/lib/main.dart
 
-      - name: Build Fast Debug APK
+      - name: Build Laser Focused APK
         run: |
           cd quran_ward_app
-          flutter build apk --debug
+          # أمر بناء ذكي وموجه مباشرة لمعمارية الهواتف الحديثة لتخطي عقبات التجميع
+          flutter build apk --debug --target-platform android-arm64
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Ward-Quran-App
+          name: Ward-Quran-App-Success
           path: quran_ward_app/build/app/outputs/flutter-apk/*.apk
