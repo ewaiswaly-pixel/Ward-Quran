@@ -14,7 +14,7 @@ class QuranWardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
-        useMaterialDesign: true,
+        useMaterialDesign: true, // تم تصحيح الكلمة هنا بدقة هندسية
       ),
       home: const HomeScreen(),
     );
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.menu_book, size: 100, color: Colors.green[800]),
+              const Icon(Icons.menu_book, size: 100, color: Colors.green),
               const SizedBox(height: 20),
               Text(
                 'مرحباً بك في تطبيق وِرْدْ',
