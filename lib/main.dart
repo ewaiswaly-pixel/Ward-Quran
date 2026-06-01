@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:adhan/adhan.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const QuranWardApp());
@@ -25,7 +28,6 @@ class QuranWardApp extends StatelessWidget {
   }
 }
 
-// متحكم التبويبات الرئيسي للتنقل بين المصحف ومواقيت الصلاة
 class MainTabController extends StatelessWidget {
   const MainTabController({super.key});
 
@@ -51,7 +53,7 @@ class MainTabController extends StatelessWidget {
           body: const TabBarView(
             children: [
               QuranIndexScreen(),
-              PrayerTimesScreen(),
+              LivePrayerTimesScreen(),
             ],
           ),
         ),
@@ -164,71 +166,146 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// الشاشة الجديدة المخصصة لمواقيت الصلاة والأذان تلقائياً
-class PrayerTimesScreen extends StatelessWidget {
-  const PrayerTimesScreen({super.key});
+// شاشة حساب مواقيت الصلاة الحية عبر الـ GPS والمعادلات الفلكية
+class LivePrayerTimesScreen extends StatefulWidget {
+  const LivePrayerTimesScreen({super.key});
 
-  // محاكاة ذكية للمواقيت المحلية مبدئياً لحين تفعيل حزم الخرائط
-  static const List<Map<String, String>> dummyPrayerTimes = [
-    {"prayer": "الفجر", "time": "03:45 ص"},
-    {"prayer": "الشروق", "time": "05:15 ص"},
-    {"prayer": "الظهر", "time": "12:00 م"},
-    {"prayer": "العصر", "time": "03:30 م"},
-    {"prayer": "المغرب", "time": "06:45 م"},
-    {"prayer": "العشاء", "time": "08:15 م"},
-  ];
+  @override
+  State<LivePrayerTimesScreen> createState() => _LivePrayerTimesScreenState();
+}
+
+class _LivePrayerTimesScreenState extends State<LivePrayerTimesScreen> {
+  String _locationStatus = "جاري تحديد موقعك الجغرافي بالـ GPS...";
+  PrayerTimes? _prayerTimes;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getDeviceLocation();
+  }
+
+  // دالة طلب الصلاحيات وجلب الموقع الفعلي من الهاتف
+  Future<void> _getDeviceLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        _locationStatus = "خدمة تحديد الموقع مغلقة في هاتفك.";
+        _isLoading = false;
+      });
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          _locationStatus = "تم رفض إذن الوصول للموقع الجغرافي.";
+          _isLoading = false;
+        });
+        return;
+      }
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low);
+    
+    _calculatePrayerTimes(position.latitude, position.longitude);
+  }
+
+  // دالة الحساب الفلكي للمواقيت بناءً على الإحداثيات الحية لعام 2026
+  void _calculatePrayerTimes(double lat, double lng) {
+    final coordinates = Coordinates(lat, lng);
+    final params = CalculationMethod.egyptian.getParameters(); // الحساب المعتمد للهيئة العامة للمساحة بمصر
+    params.madhab = Madhab.shafi;
+
+    final now = DateTime.now();
+    final components = DateComponents.from(now);
+    final prayerTimes = PrayerTimes(coordinates, components, params);
+
+    setState(() {
+      _prayerTimes = prayerTimes;
+      _locationStatus = "تم تحديث مواقيت الصلاة لموقعك الحالي بنجاح ✨";
+      _isLoading = false;
+    });
+  }
+
+  String _formatTime(DateTime? dateTime) {
+    if (dateTime == null) return "--:--";
+    // تحويل الوقت لصيغة 12 ساعة عربية أنيقة
+    return DateFormat.jm('ar').format(dateTime.toLocal());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مواقيت الصلاة والأذان', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('المواقيت الحية والأذان', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // لوحة علوية مميزة تظهر الصلاة القادمة والموقع التلقائي للمستخدم
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A4D2E),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Column(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF1A4D2E)))
+          : Column(
               children: [
-                Icon(Icons.location_on, color: Color(0xFFE8E9A1), size: 30),
-                SizedBox(height: 5),
-                Text('تحديد الموقع الجغرافي: تلقائي (GPS)', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                SizedBox(height: 15),
-                Text('الصلاة القادمة: صلاة المغرب', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                SizedBox(height: 5),
-                Text('متبقي: 45 دقيقة و 12 ثانية لتكبيرات الأذان', style: TextStyle(color: Color(0xFFE8E9A1), fontSize: 16)),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A4D2E),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.my_location, color: Color(0xFFE8E9A1), size: 28),
+                      const SizedBox(height: 8),
+                      Text(
+                        _locationStatus,
+                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "التاريخ: ${DateFormat.yMMMMEEEEd('ar').format(DateTime.now())}",
+                        style: const TextStyle(color: Colors.white70, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_prayerTimes != null)
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      children: [
+                        _buildPrayerRow("الفجر", _prayerTimes!.fajr),
+                        _buildPrayerRow("الشروق", _prayerTimes!.sunrise),
+                        _buildPrayerRow("الظهر", _prayerTimes!.dhuhr),
+                        _buildPrayerRow("العصر", _prayerTimes!.asr),
+                        _buildPrayerRow("المغرب", _prayerTimes!.maghrib),
+                        _buildPrayerRow("العشاء", _prayerTimes!.isha),
+                      ],
+                    ),
+                  ),
               ],
             ),
-          ),
-          
-          // عرض المواقيت في قائمة منظمة
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: dummyPrayerTimes.length,
-              itemBuilder: (context, index) {
-                final item = dummyPrayerTimes[index];
-                return Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  child: ListTile(
-                    leading: const Icon(Icons.notifications_active, color: Color(0xFF1A4D2E)),
-                    title: Text(item['prayer']!, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    trailing: Text(item['time']!, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.green)),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildPrayerRow(String name, DateTime time) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: ListTile(
+        leading: const Icon(Icons.volume_up, color: Color(0xFF1A4D2E)),
+        title: Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A4D2E))),
+        trailing: Text(
+          _formatTime(time),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+        ),
       ),
     );
   }
