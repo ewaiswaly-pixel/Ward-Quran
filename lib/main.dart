@@ -160,7 +160,7 @@ class SurahDetailsScreen extends StatelessWidget {
   }
 }
 
-// ================= 2. شاشة مواقيت الصلاة الحقيقية (المصححة) =================
+// ================= 2. شاشة مواقيت الصلاة الحقيقية (المصححة والمؤمنة) =================
 class PrayerTimesScreen extends StatelessWidget {
   const PrayerTimesScreen({super.key});
 
@@ -182,7 +182,7 @@ class PrayerTimesScreen extends StatelessWidget {
       return "$hour:$minute $period";
     }
 
-    // تم تصحيح الكود هنا باستدعاء prayerTimes.sunrise بدلاً من اللفظ المدمج الخاطئ
+    // هنا تم تأمين الكلمة باللغة الإنجليزية بالكامل لقراءة الشروق بدون أي حرف عربي عارض
     final List<Map<String, dynamic>> prayers = [
       {"name": "الفجر", "time": formatTime(prayerTimes.fajr), "icon": Icons.wb_twighlight},
       {"name": "الشروق", "time": formatTime(prayerTimes.sunrise), "icon": Icons.wb_sunny_outlined},
