@@ -117,32 +117,32 @@ class MainTabController extends StatelessWidget {
                 unselectedLabelColor: Colors.white60,
                 indicatorColor: Color(0xFF8C7040),
                 indicatorWeight: 3,
-                tabs: [
-                  Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
-                  Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
-                  Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'الأذكار'),
-                  Tab(icon: Icon(Icons.settings), text: 'الإعدادات'),
-                ],
-              ),
+              tabs: [
+                Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
+                Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
+                Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'الأذكار'),
+                Tab(icon: Icon(Icons.settings), text: 'الإعدادات'),
+              ],
             ),
           ),
-          body: TabBarView(
-            children: [
-              const QuranIndexScreen(),
-              const LivePrayerTimesScreen(),
-              const AzkarScreen(),
-              AppSettingsScreen(
-                isDarkMode: isDarkMode,
-                keepScreenAwake: keepScreenAwake,
-                onThemeChanged: onThemeChanged,
-                onAwakeChanged: onAwakeChanged,
-              ),
-            ],
-          ),
+        ),
+        body: TabBarView(
+          children: [
+            const QuranIndexScreen(),
+            const LivePrayerTimesScreen(),
+            const AzkarScreen(),
+            AppSettingsScreen(
+              isDarkMode: isDarkMode,
+              keepScreenAwake: keepScreenAwake,
+              onThemeChanged: onThemeChanged,
+              onAwakeChanged: onAwakeChanged,
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class QuranIndexScreen extends StatefulWidget {
@@ -178,7 +178,8 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
 
   Future<void> _preparePdfAsset() async {
     try {
-final byteData = await rootBundle.load("quran.pdf");      final docDir = await getApplicationDocumentsDirectory();
+      final byteData = await rootBundle.load("assets/quran.pdf");
+      final docDir = await getApplicationDocumentsDirectory();
       final localFile = File("${docDir.path}/quran.pdf");
       await localFile.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       
