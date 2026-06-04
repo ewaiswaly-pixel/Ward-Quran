@@ -178,8 +178,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
 
   Future<void> _preparePdfAsset() async {
     try {
-      final byteData = await rootBundle.load("assets/quran.pdf");
-      final docDir = await getApplicationDocumentsDirectory();
+final byteData = await rootBundle.load("quran.pdf");      final docDir = await getApplicationDocumentsDirectory();
       final localFile = File("${docDir.path}/quran.pdf");
       await localFile.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       
