@@ -1,3 +1,4 @@
+import 'dart:ui' as ui; // حل مشكلة التعارض وإجبار التطبيق على قراءة الاتجاه الصحيح للواجهات
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -100,7 +101,7 @@ class MainTabController extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Directionality(
-      textDirection: TextDirection.RTL,
+      textDirection: ui.TextDirection.rtl, // استخدام التعريف الصريح لمنع انهيار السيرفر
       child: DefaultTabController(
         length: 4,
         child: Scaffold(
