@@ -1,5 +1,5 @@
-name: ward_quran
-description: "A Flutter project for Quran."
+name: quran_ward_app
+description: "A beautiful Quran and Prayer Times Flutter app"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,13 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.6
+  geolocator: ^11.0.0
+  adhan: ^2.1.1
+  intl: ^0.19.0
   syncfusion_flutter_pdfviewer: ^24.2.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
