@@ -291,10 +291,10 @@ class SurahViewScreen extends StatelessWidget {
       case 112:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُلْ هُوَ اللَّهُ أَحَدٌ",
-          "اللَّهُ الصَّمَدُ",
+          "قُلْ هو اللَّه أَحَدٌ",
+          "اللَّه الصَّمَدُ",
           "لَمْ يَلِدْ وَلَمْ يُولَدْ",
-          "وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ"
+          "وَلَمْ يَكُن لَّه كُفُوًا أَحَدٌ"
         ];
       default:
         return [
@@ -507,7 +507,8 @@ class _AzkarScreenState extends State<AzkarScreen> {
       cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     }
 
-    Color textColor = isDark ? Colors.white90 : const Color(0xFF2C3E50);
+    // تم تعديل هذا السطر بالكامل: إزالة الـ const وتصحيح قيمة الـ hex لـ 8 خانات فقط
+    Color textColor = isDark ? Colors.white90 : Color(0xFF2C3E50);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
