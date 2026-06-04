@@ -146,7 +146,6 @@ class QuranIndexScreen extends StatefulWidget {
 }
 
 class _QuranIndexScreenState extends State<QuranIndexScreen> {
-  // الفهرس الكامل والحقيقي لـ 114 سورة في القرآن الكريم مرتبة تنازلياً وتصاعدياً حسب الرسم العثماني
   final List<Map<String, dynamic>> _allSuwar = [
     {"id": 1, "name": "الفاتحة", "type": "مكية", "verses": 7},
     {"id": 2, "name": "البقرة", "type": "مدنية", "verses": 286},
@@ -377,7 +376,6 @@ class SurahViewScreen extends StatelessWidget {
 
   const SurahViewScreen({super.key, required this.surahName, required this.surahId, required this.totalVerses});
 
-  // توليد آيات حقيقية مبدئية للسور لضمان استقرار التطبيق وعرض الصفحات بشكل صحيح
   List<String> getSurahVerses(int id) {
     switch (id) {
       case 1:
@@ -425,7 +423,6 @@ class SurahViewScreen extends StatelessWidget {
           "مِنَ الْجِنَّةِ وَالنَّاسِ"
         ];
       default:
-        // توليد ديناميكي ذكي لبقية السور لعرض ترقيم الآيات الصحيح بدون زيادة حجم الملف
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
           ...List.generate(totalVerses - 1, (index) => "جاري تحميل نص الآية الكريمة الموثقة برقم ${index + 1} بالخط العثماني الشريف...")
@@ -647,7 +644,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
         border: Border.all(color: isDone ? Colors.green.withOpacity(0.5) : const Color(0xFFE5D5B6).withOpacity(0.4)),
       ),
       child: Column(
-        cross CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start, // تم تصحيح الخطأ الإملائي هنا بنجاح
         children: [
           Text(text, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textColor, height: 1.6)),
           const SizedBox(height: 8),
