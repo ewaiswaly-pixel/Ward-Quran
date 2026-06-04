@@ -199,37 +199,74 @@ class QuranScreen extends StatelessWidget {
   }
 }
 
-// ================= 2. شاشة مواقيت الصلاة (التي كانت تسبب الخطأ) =================
+// ================= 2. شاشة مواقيت الصلاة الحقيقية =================
+import 'package:adhan/adhan.dart'; // تأكد من وجود هذا السطر في أعلى الملف أو هنا
+
 class PrayerTimesScreen extends StatelessWidget {
   const PrayerTimesScreen({super.key});
 
+  // دالة لحساب المواقيت الحقيقية لليوم
+  PrayerTimes _calculateTimes() {
+    // إحداثيات افتراضية (مثال: القاهرة/مكة) لتبسيط الخطوة الأولى
+    final coordinates = Coordinates(30.0444, 31.2357); 
+    final dateComponents = DateComponents.fromDateTime(DateTime.now());
+    final params = CalculationMethod.umm_al_qura.getParameters();
+    
+    return PrayerTimes(coordinates, dateComponents, params);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final prayerTimes = _calculateTimes();
+
+    // تنسيق الوقت ليظهر بشكل مريح 12 ساعة (ص/م)
+    String formatTime(DateTime time) {
+      int hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+      String period = time.hour >= 12 ? "م" : "ص";
+      String minute = time.minute.toString().padLeft(2, '0');
+      return "$hour:$minute $period";
+    }
+
+    // قائمة الصلوات لعرضها في الواجهة
+    final List<Map<String, dynamic>> prayers = [
+      {"name": "الفجر", "time": formatTime(prayerTimes.fajr), "icon": Icons.wb_twighlight},
+      {"name": "الشروق", "time": formatTime(prayerTimes.shروق ?? prayerTimes.fajr.add(const Duration(hours: 1, minutes: 20))), "icon": Icons.wb_sunny_outlined},
+      {"name": "الظهر", "time": formatTime(prayerTimes.dhuhr), "icon": Icons.wb_sunny},
+      {"name": "العصر", "time": formatTime(prayerTimes.asr), "icon": Icons.cloud_queue},
+      {"name": "المغرب", "time": formatTime(prayerTimes.maghrib), "icon": Icons.nights_stay_outlined},
+      {"name": "العشاء", "time": formatTime(prayerTimes.isha), "icon": Icons.nights_stay},
+    ];
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF4A4A4A),
-          title: const Text('مواقيت الصلاة', style: TextStyle(color: Colors.white)),
+          title: const Text('مواقيت الصلاة الحقيقية', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.access_time, size: 80, color: Color(0xFF4A4A4A)),
-              const SizedBox(height: 20),
-              const Text(
-                'مواقيت الصلاة تعمل الآن بنجاح!',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        body: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: prayers.length,
+          itemBuilder: (context, index) {
+            final prayer = prayers[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              elevation: 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: ListTile(
+                leading: Icon(prayer["icon"], color: const Color(0xFF4A4A4A), size: 28),
+                title: Text(
+                  prayer["name"],
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                trailing: Text(
+                  prayer["time"],
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                'تمت تهيئة التواريخ بنجاح ودون أخطاء.',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
