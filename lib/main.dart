@@ -236,38 +236,146 @@ class PrayerTimesScreen extends StatelessWidget {
   }
 }
 
-// ================= 3. شاشة الأذكار =================
-class AzkarScreen extends StatelessWidget {
+// ================= 3. شاشة الأذكار والتسبيح التفاعلية =================
+class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
+
+  @override
+  State<AzkarScreen> createState() => _AzkarScreenState();
+}
+
+class _AzkarScreenState extends State<AzkarScreen> {
+  // قائمة الأذكار الحقيقية مع العدادات الخاصة بها
+  final List<Map<String, dynamic>> _azkarList = [
+    {
+      "text": "سُبْحَانَ اللهِ وَبِحَمْدِهِ",
+      "target": 33,
+      "current": 0,
+      "reward": "حُطَّتْ خَطَايَاهُ وَإِنْ كَانَتْ مِثْلَ زَبَدِ الْبَحْرِ."
+    },
+    {
+      "text": "أَسْتَغْفِرُ اللهَ وَأَتُوبُ إِلَيْهِ",
+      "target": 100,
+      "current": 0,
+      "reward": "متاعاً حسناً، وتيسيراً للأمور، وغفراناً للذنوب."
+    },
+    {
+      "text": "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
+      "target": 10,
+      "current": 0,
+      "reward": "من صلى عليّ صلاة صلى الله عليه بها عشراً."
+    },
+    {
+      "text": "لا حَوْلَ وَلا قُوَّةَ إِلا بِاللهِ",
+      "target": 33,
+      "current": 0,
+      "reward": "كنز من كنوز الجنة."
+    }
+  ];
+
+  // دالة لإعادة تصفير جميع العدادات والبدء من جديد
+  void _resetAllCounters() {
+    setState(() {
+      for (var zikr in _azkarList) {
+        zikr["current"] = 0;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: TextDirection.rtl, // لضبط اللغات والاتجاهات العربية
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF4A4A4A),
-          title: const Text('الأذكار', style: TextStyle(color: Colors.white)),
+          title: const Text('الأذكار والسبحة الرقمية', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           centerTitle: true,
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: const [
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.wb_twighlight, color: Colors.amber),
-                title: Text('أذكار الصباح'),
-                trailing: Icon(Icons.arrow_forward_ios, size: 16),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.nightlight_round, color: Colors.indigo),
-                title: Text('أذكار المساء'),
-                trailing: Icon(Icons.arrow_forward_ios, size: 16),
-              ),
-            ),
+          actions: [
+            // زر لإعادة التصفير
+            IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              onPressed: _resetAllCounters,
+              tooltip: 'إعادة تصفير العدادات',
+            )
           ],
+        ),
+        body: ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: _azkarList.length,
+          itemBuilder: (context, index) {
+            final zikr = _azkarList[index];
+            final bool isCompleted = zikr["current"] >= zikr["target"];
+
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                // يتغير لون الخلفية للون أخضر خفيف مريح للعين عند الاكتمال
+                color: isCompleted ? Colors.green.shade50 : Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: isCompleted ? Colors.green.shade300 : Colors.grey.shade300,
+                  width: isCompleted ? 2 : 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  )
+                ],
+              ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                title: Text(
+                  zikr["text"],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isCompleted ? Colors.green.shade800 : Colors.black87,
+                  ),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    zikr["reward"],
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                  ),
+                ),
+                // العداد والزر في الجانب الأيسر
+                trailing: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isCompleted ? Colors.green : const Color(0xFF4A4A4A),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  onPressed: () {
+                    if (!isCompleted) {
+                      setState(() {
+                        zikr["current"]++;
+                      });
+                    }
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${zikr["current"]} / ${zikr["target"]}',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      const SizedBox(height: 2),
+                      Icon(
+                        isCompleted ? Icons.check_circle : Icons.touch_app,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
