@@ -399,9 +399,9 @@ class LivePrayerTimesScreen extends StatelessWidget {
                 const Divider(color: Colors.white12, height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
-                    const SizedBox(width: 4),
+                  children: const [
+                    Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
+                    SizedBox(width: 4),
                     Text(
                       "توقيت جمهورية مصر العربية القياسي",
                       style: TextStyle(color: Colors.white70, fontSize: 13),
@@ -507,12 +507,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
       cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     }
 
-    Color textColor;
-    if (isDark) {
-      textColor = Colors.white90;
-    } else {
-      textColor = const Color(0xFF2C3E50);
-    }
+    Color textColor = isDark ? Colors.white90 : const Color(0xFF2C3E50);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -523,7 +518,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
         border: Border.all(color: isDone ? Colors.green.withOpacity(0.5) : const Color(0xFFE5D5B6).withOpacity(0.4)),
       ),
       child: Column(
-        cross CrossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(text, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textColor, height: 1.6)),
           const SizedBox(height: 8),
@@ -622,10 +617,10 @@ class AppSettingsScreen extends StatelessWidget {
               border: Border.all(color: const Color(0xFF8C7040).withOpacity(0.2)),
             ),
             child: Column(
-              children: [
-                Text('تطبيق وِرْدْ - الإصدار 1.0.1', style: TextStyle(fontWeight: FontWeight.bold, color: const Color(0xFF8C7040))),
-                const SizedBox(height: 6),
-                const Text('تطبيق إسلامي شامل ومطور لتسهيل القراءة والمتابعة اليومية.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              children: const [
+                Text('تطبيق وِرْدْ - الإصدار 1.0.1', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8C7040))),
+                SizedBox(height: 6),
+                Text('تطبيق إسلامي شامل ومطور لتسهيل القراءة والمتابعة اليومية.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
               ],
             ),
           )
