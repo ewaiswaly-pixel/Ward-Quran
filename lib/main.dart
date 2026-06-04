@@ -404,7 +404,7 @@ class LivePrayerTimesScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       "توقيت جمهورية مصر العربية القياسي",
-                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13),
+                      style: TextStyle(color: Colors.white70, fontSize: 13),
                     ),
                   ],
                 ),
@@ -436,7 +436,7 @@ class LivePrayerTimesScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.02)),
+        border: Border.all(color: Colors.black12),
       ),
       child: ListTile(
         leading: Icon(icon, color: const Color(0xFF8C7040), size: 22),
@@ -460,6 +460,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text('الأذكار اليومية', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -473,6 +474,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
             "من أذكار الصباح والمساء (٣ مرات)",
             3,
             _counter1,
+            isDark,
             () {
               if (_counter1 < 3) setState(() => _counter1++);
             },
@@ -484,6 +486,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
             "الدعاء بالعافية والتحصين اليومي (٣ مرات)",
             3,
             _counter2,
+            isDark,
             () {
               if (_counter2 < 3) setState(() => _counter2++);
             },
@@ -494,24 +497,30 @@ class _AzkarScreenState extends State<AzkarScreen> {
     );
   }
 
-  Widget _buildZikrCard(BuildContext context, String text, String subtitle, int target, int current, VoidCallback onTap, VoidCallback onReset) {
+  Widget _buildZikrCard(BuildContext context, String text, String subtitle, int target, int current, bool isDark, VoidCallback onTap, VoidCallback onReset) {
     bool isDone = current >= target;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    Color cardBg;
+    if (isDone) {
+      cardBg = isDark ? const Color(0xFF1B382B) : const Color(0xFFE8F5E9);
+    } else {
+      cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    }
+
+    Color textColor = isDark ? Colors.white90 : const Color(0xFF2C3E50);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDone 
-            ? (isDark ? const Color(0xFF1B382B) : const Color(0xFFE8F5E9)) 
-            : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: cardBg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isDone ? Colors.green.withOpacity(0.5) : const Color(0xFFE5D5B6).withOpacity(0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(text, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? Colors.white90 : const Color(0xFF2C3E50), height: 1.6)),
+          Text(text, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textColor, height: 1.6)),
           const SizedBox(height: 8),
           Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           const Divider(height: 24),
@@ -610,8 +619,8 @@ class AppSettingsScreen extends StatelessWidget {
             child: Column(
               children: [
                 Text('تطبيق وِرْدْ - الإصدار 1.0.1', style: TextStyle(fontWeight: FontWeight.bold, color: const Color(0xFF8C7040))),
-                SizedBox(height: 6),
-                Text('تطبيق إسلامي شامل ومطور لتسهيل القراءة والمتابعة اليومية.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+                const SizedBox(height: 6),
+                const Text('تطبيق إسلامي شامل ومطور لتسهيل القراءة والمتابعة اليومية.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
               ],
             ),
           )
