@@ -100,7 +100,7 @@ class MainTabController extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: TextDirection.RTL,
       child: DefaultTabController(
         length: 4,
         child: Scaffold(
