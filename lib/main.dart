@@ -12,7 +12,6 @@ class QuranWardApp extends StatefulWidget {
 }
 
 class _QuranWardAppState extends State<QuranWardApp> {
-  // متغيرات التحكم في الإعدادات العامة للتطبيق
   bool _isDarkMode = false;
   bool _keepScreenAwake = true;
 
@@ -33,7 +32,6 @@ class _QuranWardAppState extends State<QuranWardApp> {
     return MaterialApp(
       title: 'تطبيق وِرْدْ',
       debugShowCheckedModeBanner: false,
-      // دعم الوضعين الفاتح والداكن ديناميكياً
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
@@ -95,19 +93,18 @@ class MainTabController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: DefaultTabController(
-        length: 4, // تم التوسيع لأربعة أقسام لإضافة الإعدادات
+        length: 4,
         child: Scaffold(
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
               boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
             ),
             child: Material(
-              color: Theme.of(context).brightness == Brightness.dark 
-                  ? const Color(0xFF1F1F1F) 
-                  : const Color(0xFF0F4C3A),
+              color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFF0F4C3A),
               child: const TabBar(
                 labelColor: Color(0xFFE5D5B6),
                 unselectedLabelColor: Colors.white60,
@@ -141,7 +138,6 @@ class MainTabController extends StatelessWidget {
   }
 }
 
-// شاشة فهرس السور الموسع مع خاصية البحث الفوري
 class QuranIndexScreen extends StatefulWidget {
   const QuranIndexScreen({super.key});
 
@@ -150,7 +146,6 @@ class QuranIndexScreen extends StatefulWidget {
 }
 
 class _QuranIndexScreenState extends State<QuranIndexScreen> {
-  // توسيع القائمة البرمجية لتشمل السور الكبرى وأجزاء القرآن بشكل أوسع
   final List<Map<String, dynamic>> _allSuwar = [
     {"id": 1, "name": "الفاتحة", "type": "مكية", "verses": 7},
     {"id": 2, "name": "البقرة", "type": "مدنية", "verses": 286},
@@ -275,7 +270,6 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
   }
 }
 
-// شاشة عرض النصوص والآيات
 class SurahViewScreen extends StatelessWidget {
   final String surahName;
   final int surahId;
@@ -363,7 +357,6 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة مواقيت الصلاة المحلية
 class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -454,7 +447,6 @@ class LivePrayerTimesScreen extends StatelessWidget {
   }
 }
 
-// شاشة الأذكار التفاعلية
 class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
 
@@ -551,7 +543,6 @@ class _AzkarScreenState extends State<AzkarScreen> {
   }
 }
 
-// ⚙️ شاشة الإعدادات المضافة حديثاً للتحكم الكامل في واجهة وسلوك التطبيق
 class AppSettingsScreen extends StatelessWidget {
   final bool isDarkMode;
   final bool keepScreenAwake;
@@ -596,9 +587,9 @@ class AppSettingsScreen extends StatelessWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.phone_android, color: Color(0xFF8C7040)),
-                  title: const Text('إبقاء الشاشة تعمل دائماً', style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('منع انطفاء واجهة الشاشة تلقائياً أثناء القراءة'),
+                  leading: const Icon(Icons.bolt, color: Color(0xFF8C7040)),
+                  title: const Text('إبقاء الشاشة مضيئة تلقائياً', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('تحسين أداء الواجهة لمنع انطفاء الشاشة المفاجئ أثناء القراءة'),
                   trailing: Switch(
                     value: keepScreenAwake,
                     onChanged: onAwakeChanged,
@@ -609,7 +600,6 @@ class AppSettingsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          // كارت معلومات التطبيق والإصدار للحفاظ على المظهر الاحترافي
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -618,8 +608,8 @@ class AppSettingsScreen extends StatelessWidget {
               border: Border.all(color: const Color(0xFF8C7040).withOpacity(0.2)),
             ),
             child: Column(
-              children: const [
-                Text('تطبيق وِرْدْ - الإصدار 1.0.1', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8C7040))),
+              children: [
+                Text('تطبيق وِرْدْ - الإصدار 1.0.1', style: TextStyle(fontWeight: FontWeight.bold, color: const Color(0xFF8C7040))),
                 SizedBox(height: 6),
                 Text('تطبيق إسلامي شامل ومطور لتسهيل القراءة والمتابعة اليومية.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
               ],
