@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:adhan/adhan.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 void main() {
   runApp(const QuranWardApp());
@@ -117,32 +115,32 @@ class MainTabController extends StatelessWidget {
                 unselectedLabelColor: Colors.white60,
                 indicatorColor: Color(0xFF8C7040),
                 indicatorWeight: 3,
-              tabs: [
-                Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
-                Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
-                Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'الأذكار'),
-                Tab(icon: Icon(Icons.settings), text: 'الإعدادات'),
-              ],
+                tabs: [
+                  Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
+                  Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
+                  Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'الأذكار'),
+                  Tab(icon: Icon(Icons.settings), text: 'الإعدادات'),
+                ],
+              ),
             ),
           ),
-        ),
-        body: TabBarView(
-          children: [
-            const QuranIndexScreen(),
-            const LivePrayerTimesScreen(),
-            const AzkarScreen(),
-            AppSettingsScreen(
-              isDarkMode: isDarkMode,
-              keepScreenAwake: keepScreenAwake,
-              onThemeChanged: onThemeChanged,
-              onAwakeChanged: onAwakeChanged,
-            ),
-          ],
+          body: TabBarView(
+            children: [
+              const QuranIndexScreen(),
+              const LivePrayerTimesScreen(),
+              const AzkarScreen(),
+              AppSettingsScreen(
+                isDarkMode: isDarkMode,
+                keepScreenAwake: keepScreenAwake,
+                onThemeChanged: onThemeChanged,
+                onAwakeChanged: onAwakeChanged,
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class QuranIndexScreen extends StatefulWidget {
@@ -153,9 +151,6 @@ class QuranIndexScreen extends StatefulWidget {
 }
 
 class _QuranIndexScreenState extends State<QuranIndexScreen> {
-  String? _localPdfPath;
-  bool _isPreparingPdf = true;
-
   final List<Map<String, dynamic>> _allSuwar = [
     {"id": 1, "name": "الفاتحة", "type": "مكية", "verses": 7, "page": 1},
     {"id": 2, "name": "البقرة", "type": "مدنية", "verses": 286, "page": 2},
@@ -173,25 +168,6 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
   void initState() {
     super.initState();
     _filteredSuwar = _allSuwar;
-    _preparePdfAsset();
-  }
-
-  Future<void> _preparePdfAsset() async {
-    try {
-      final byteData = await rootBundle.load("assets/quran.pdf");
-      final docDir = await getApplicationDocumentsDirectory();
-      final localFile = File("${docDir.path}/quran.pdf");
-      await localFile.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-      
-      setState(() {
-        _localPdfPath = localFile.path;
-        _isPreparingPdf = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isPreparingPdf = false;
-      });
-    }
   }
 
   @override
@@ -199,79 +175,76 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(title: const Text('المصحف الشريف الموثق', style: TextStyle(fontWeight: FontWeight.bold))),
-      body: _isPreparingPdf
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF0F4C3A)))
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (value) {
-                      setState(() {
-                        _filteredSuwar = value.isEmpty 
-                            ? _allSuwar 
-                            : _allSuwar.where((s) => s["name"].contains(value)).toList();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'ابحث عن اسم السورة...',
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _filteredSuwar.length,
-                    itemBuilder: (context, index) {
-                      final surah = _filteredSuwar[index];
-                      return ListTile(
-                        title: Text(surah['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        subtitle: Text('${surah['type']} ❖ آياتها ${surah['verses']}'),
-                        trailing: Text('صفحة ${surah['page']}', style: const TextStyle(color: Color(0xFF8C7040))),
-                        onTap: () {
-                          if (_localPdfPath != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => QuranPdfViewScreen(
-                                  pdfPath: _localPdfPath!,
-                                  surahName: surah['name'],
-                                  initialPage: surah['page'] - 1,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _filteredSuwar = value.isEmpty 
+                      ? _allSuwar 
+                      : _allSuwar.where((s) => s["name"].contains(value)).toList();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'ابحث عن اسم السورة...',
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredSuwar.length,
+              itemBuilder: (context, index) {
+                final surah = _filteredSuwar[index];
+                return ListTile(
+                  title: Text(surah['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  subtitle: Text('${surah['type']} ❖ آياتها ${surah['verses']}'),
+                  trailing: Text('صفحة ${surah['page']}', style: const TextStyle(color: Color(0xFF8C7040))),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QuranPdfViewScreen(
+                          surahName: surah['name'],
+                          initialPage: surah['page'],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class QuranPdfViewScreen extends StatelessWidget {
-  final String pdfPath;
   final String surahName;
   final int initialPage;
 
-  const QuranPdfViewScreen({super.key, required this.pdfPath, required this.surahName, required this.initialPage});
+  const QuranPdfViewScreen({super.key, required this.surahName, required this.initialPage});
 
   @override
   Widget build(BuildContext context) {
+    final PdfViewerController pdfViewerController = PdfViewerController();
+
     return Scaffold(
       appBar: AppBar(title: Text('سورة $surahName')),
-      body: PDFView(
-        filePath: pdfPath,
-        enableSwipe: true,
-        swipeHorizontal: true,
-        defaultPage: initialPage,
+      body: SfPdfViewer.asset(
+        'assets/quran.pdf',
+        controller: pdfViewerController,
+        onDocumentLoaded: (PdfDocumentLoadedDetails details) {
+          pdfViewerController.jumpToPage(initialPage);
+        },
       ),
     );
   }
