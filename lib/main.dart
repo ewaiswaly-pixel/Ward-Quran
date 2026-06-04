@@ -239,8 +239,8 @@ class QuranPdfViewScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('سورة $surahName')),
-      body: SfPdfViewer.asset(
-        'assets/quran.pdf',
+      body: SfPdfViewer.network(
+        'https://archive.org/download/quran-pdf-high-quality/quran.pdf',
         controller: pdfViewerController,
         onDocumentLoaded: (PdfDocumentLoadedDetails details) {
           pdfViewerController.jumpToPage(initialPage);
