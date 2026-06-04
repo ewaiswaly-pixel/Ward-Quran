@@ -7,9 +7,13 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-adhan: ^2.1.1
   flutter:
     sdk: flutter
+
+  # الحزم التي أضفناها سابقاً والمكتبة الجديدة
+  intl: ^0.19.0
+  adhan: ^2.1.1
+  quran: ^0.4.0  <-- اكتب السطر هنا تماماً بنفس هذا المحاذاة
   cupertino_icons: ^1.0.6
   geolocator: ^11.0.0
   adhan: ^2.1.1
