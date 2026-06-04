@@ -4,12 +4,9 @@ import 'package:adhan/adhan.dart';
 import 'package:quran/quran.dart' as quran; 
 
 void main() async {
-  // تهيئة خدمات فلاتر الأساسية
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // حل مشكلة الشاشة السوداء والخطأ LocaleDataException
+  // حل مشكلة الشاشة السوداء (LocaleDataException)
   await initializeDateFormatting('ar', null); 
-  
   runApp(const MyApp());
 }
 
@@ -20,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'المصحف الشريف الموثق',
+      title: 'التطبيق الإسلامي الشامل',
       theme: ThemeData(
         primarySwatch: Colors.grey,
         scaffoldBackgroundColor: Colors.white,
@@ -41,10 +38,10 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const QuranScreen(),       // تبويب المصحف (0)
-    const PrayerTimesScreen(), // تبويب المواقيت (1)
-    const AzkarScreen(),       // تبويب الأذكار (2)
-    const SettingsScreen(),    // تبويب العدادات (3)
+    const QuranScreen(),       
+    const PrayerTimesScreen(), 
+    const AzkarScreen(),       
+    const SettingsScreen(),    
   ];
 
   @override
@@ -89,7 +86,7 @@ class QuranScreen extends StatelessWidget {
           elevation: 0,
         ),
         body: ListView.separated(
-          itemCount: quran.totalSurahCount, // 114 سورة تلقائياً
+          itemCount: quran.totalSurahCount, 
           separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
             int surahNumber = index + 1;
@@ -120,7 +117,6 @@ class QuranScreen extends StatelessWidget {
   }
 }
 
-// شاشة عرض آيات السورة بالتفصيل عند الضغط عليها
 class SurahDetailsScreen extends StatelessWidget {
   final int surahNumber;
   const SurahDetailsScreen({required this.surahNumber, super.key});
@@ -160,12 +156,12 @@ class SurahDetailsScreen extends StatelessWidget {
   }
 }
 
-// ================= 2. شاشة مواقيت الصلاة الحقيقية (المصححة والمؤمنة) =================
+// ================= 2. شاشة مواقيت الصلاة الحقيقية =================
 class PrayerTimesScreen extends StatelessWidget {
   const PrayerTimesScreen({super.key});
 
   PrayerTimes _calculateTimes() {
-    final coordinates = Coordinates(30.0444, 31.2357); // إحداثيات مستقرة ودقيقة
+    final coordinates = Coordinates(30.0444, 31.2357); 
     final dateComponents = DateComponents.fromDateTime(DateTime.now());
     final params = CalculationMethod.umm_al_qura.getParameters();
     return PrayerTimes(coordinates, dateComponents, params);
@@ -182,10 +178,9 @@ class PrayerTimesScreen extends StatelessWidget {
       return "$hour:$minute $period";
     }
 
-    // هنا تم تأمين الكلمة باللغة الإنجليزية بالكامل لقراءة الشروق بدون أي حرف عربي عارض
     final List<Map<String, dynamic>> prayers = [
       {"name": "الفجر", "time": formatTime(prayerTimes.fajr), "icon": Icons.wb_twighlight},
-      {"name": "الشروق", "time": formatTime(prayerTimes.sunrise), "icon": Icons.wb_sunny_outlined},
+      {"name": "الشروق", "time": formatTime(prayerTimes.sunrise), "icon": Icons.wb_sunny_outlined}, // تم إصلاح الكلمة هنا
       {"name": "الظهر", "time": formatTime(prayerTimes.dhuhr), "icon": Icons.wb_sunny},
       {"name": "العصر", "time": formatTime(prayerTimes.asr), "icon": Icons.cloud_queue},
       {"name": "المغرب", "time": formatTime(prayerTimes.maghrib), "icon": Icons.nights_stay_outlined},
@@ -306,7 +301,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
   }
 }
 
-// ================= 4. شاشة العدادات (الإعدادات) =================
+// ================= 4. شاشة العدادات =================
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
