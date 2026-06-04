@@ -160,12 +160,12 @@ class SurahDetailsScreen extends StatelessWidget {
   }
 }
 
-// ================= 2. شاشة مواقيت الصلاة الحقيقية =================
+// ================= 2. شاشة مواقيت الصلاة الحقيقية (المصححة) =================
 class PrayerTimesScreen extends StatelessWidget {
   const PrayerTimesScreen({super.key});
 
   PrayerTimes _calculateTimes() {
-    final coordinates = Coordinates(30.0444, 31.2357); // إحداثيات افتراضية دقيقة ومستقرة
+    final coordinates = Coordinates(30.0444, 31.2357); // إحداثيات مستقرة ودقيقة
     final dateComponents = DateComponents.fromDateTime(DateTime.now());
     final params = CalculationMethod.umm_al_qura.getParameters();
     return PrayerTimes(coordinates, dateComponents, params);
@@ -182,9 +182,10 @@ class PrayerTimesScreen extends StatelessWidget {
       return "$hour:$minute $period";
     }
 
+    // تم تصحيح الكود هنا باستدعاء prayerTimes.sunrise بدلاً من اللفظ المدمج الخاطئ
     final List<Map<String, dynamic>> prayers = [
       {"name": "الفجر", "time": formatTime(prayerTimes.fajr), "icon": Icons.wb_twighlight},
-      {"name": "الشروق", "time": formatTime(prayerTimes.shروق ?? prayerTimes.fajr.add(const Duration(hours: 1, minutes: 20))), "icon": Icons.wb_sunny_outlined},
+      {"name": "الشروق", "time": formatTime(prayerTimes.sunrise), "icon": Icons.wb_sunny_outlined},
       {"name": "الظهر", "time": formatTime(prayerTimes.dhuhr), "icon": Icons.wb_sunny},
       {"name": "العصر", "time": formatTime(prayerTimes.asr), "icon": Icons.cloud_queue},
       {"name": "المغرب", "time": formatTime(prayerTimes.maghrib), "icon": Icons.nights_stay_outlined},
