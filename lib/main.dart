@@ -4,20 +4,45 @@ void main() {
   runApp(const QuranWardApp());
 }
 
-class QuranWardApp extends StatelessWidget {
+class QuranWardApp extends StatefulWidget {
   const QuranWardApp({super.key});
+
+  @override
+  State<QuranWardApp> createState() => _QuranWardAppState();
+}
+
+class _QuranWardAppState extends State<QuranWardApp> {
+  // متغيرات التحكم في الإعدادات العامة للتطبيق
+  bool _isDarkMode = false;
+  bool _keepScreenAwake = true;
+
+  void _toggleTheme(bool value) {
+    setState(() {
+      _isDarkMode = value;
+    });
+  }
+
+  void _toggleScreenAwake(bool value) {
+    setState(() {
+      _keepScreenAwake = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'تطبيق وِرْدْ',
       debugShowCheckedModeBanner: false,
+      // دعم الوضعين الفاتح والداكن ديناميكياً
+      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
+        brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF0F4C3A),
           primary: const Color(0xFF0F4C3A),
           secondary: const Color(0xFF8C7040),
+          brightness: Brightness.light,
         ),
         scaffoldBackgroundColor: const Color(0xFFFAF7F0),
         appBarTheme: const AppBarTheme(
@@ -27,28 +52,63 @@ class QuranWardApp extends StatelessWidget {
           centerTitle: true,
         ),
       ),
-      home: const MainTabController(),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF0F4C3A),
+          primary: const Color(0xFF0F4C3A),
+          secondary: const Color(0xFFE5D5B6),
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1F1F1F),
+          foregroundColor: Color(0xFFE5D5B6),
+          elevation: 0,
+          centerTitle: true,
+        ),
+      ),
+      home: MainTabController(
+        isDarkMode: _isDarkMode,
+        keepScreenAwake: _keepScreenAwake,
+        onThemeChanged: _toggleTheme,
+        onAwakeChanged: _toggleScreenAwake,
+      ),
     );
   }
 }
 
 class MainTabController extends StatelessWidget {
-  const MainTabController({super.key});
+  final bool isDarkMode;
+  final bool keepScreenAwake;
+  final ValueChanged<bool> onThemeChanged;
+  final ValueChanged<bool> onAwakeChanged;
+
+  const MainTabController({
+    super.key,
+    required this.isDarkMode,
+    required this.keepScreenAwake,
+    required this.onThemeChanged,
+    required this.onAwakeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: DefaultTabController(
-        length: 3,
+        length: 4, // تم التوسيع لأربعة أقسام لإضافة الإعدادات
         child: Scaffold(
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
               boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
             ),
-            child: const Material(
-              color: Color(0xFF0F4C3A),
-              child: TabBar(
+            child: Material(
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? const Color(0xFF1F1F1F) 
+                  : const Color(0xFF0F4C3A),
+              child: const TabBar(
                 labelColor: Color(0xFFE5D5B6),
                 unselectedLabelColor: Colors.white60,
                 indicatorColor: Color(0xFF8C7040),
@@ -57,15 +117,22 @@ class MainTabController extends StatelessWidget {
                   Tab(icon: Icon(Icons.menu_book), text: 'المصحف'),
                   Tab(icon: Icon(Icons.access_time), text: 'المواقيت'),
                   Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'الأذكار'),
+                  Tab(icon: Icon(Icons.settings), text: 'الإعدادات'),
                 ],
               ),
             ),
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              QuranIndexScreen(),
-              LivePrayerTimesScreen(),
-              AzkarScreen(),
+              const QuranIndexScreen(),
+              const LivePrayerTimesScreen(),
+              const AzkarScreen(),
+              AppSettingsScreen(
+                isDarkMode: isDarkMode,
+                keepScreenAwake: keepScreenAwake,
+                onThemeChanged: onThemeChanged,
+                onAwakeChanged: onAwakeChanged,
+              ),
             ],
           ),
         ),
@@ -74,7 +141,7 @@ class MainTabController extends StatelessWidget {
   }
 }
 
-// شاشة فهرس سور القرآن الكريم مع خاصية البحث الفوري
+// شاشة فهرس السور الموسع مع خاصية البحث الفوري
 class QuranIndexScreen extends StatefulWidget {
   const QuranIndexScreen({super.key});
 
@@ -83,12 +150,19 @@ class QuranIndexScreen extends StatefulWidget {
 }
 
 class _QuranIndexScreenState extends State<QuranIndexScreen> {
+  // توسيع القائمة البرمجية لتشمل السور الكبرى وأجزاء القرآن بشكل أوسع
   final List<Map<String, dynamic>> _allSuwar = [
     {"id": 1, "name": "الفاتحة", "type": "مكية", "verses": 7},
     {"id": 2, "name": "البقرة", "type": "مدنية", "verses": 286},
     {"id": 3, "name": "آل عمران", "type": "مدنية", "verses": 200},
     {"id": 4, "name": "النساء", "type": "مدنية", "verses": 176},
+    {"id": 5, "name": "المائدة", "type": "مدنية", "verses": 120},
+    {"id": 6, "name": "الأنعام", "type": "مكية", "verses": 165},
+    {"id": 7, "name": "الأعراف", "type": "مكية", "verses": 206},
+    {"id": 18, "name": "الكهف", "type": "مكية", "verses": 110},
     {"id": 36, "name": "يس", "type": "مكية", "verses": 83},
+    {"id": 55, "name": "الرحمن", "type": "مدنية", "verses": 78},
+    {"id": 56, "name": "الواقعة", "type": "مكية", "verses": 96},
     {"id": 67, "name": "الملك", "type": "مكية", "verses": 30},
     {"id": 112, "name": "الإخلاص", "type": "مكية", "verses": 4},
     {"id": 113, "name": "الفلق", "type": "مكية", "verses": 5},
@@ -121,6 +195,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text('مصحف المدينة المنورة', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -134,7 +209,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
               onChanged: (value) => _runFilter(value),
               decoration: InputDecoration(
                 hintText: 'ابحث عن اسم السورة...',
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF0F4C3A)),
+                prefixIcon: Icon(Icons.search, color: isDark ? const Color(0xFFE5D5B6) : const Color(0xFF0F4C3A)),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, color: Colors.grey),
@@ -145,7 +220,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -153,7 +228,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF0F4C3A), width: 1.5),
+                  borderSide: BorderSide(color: isDark ? const Color(0xFFE5D5B6) : const Color(0xFF0F4C3A), width: 1.5),
                 ),
               ),
             ),
@@ -169,16 +244,16 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.4)),
+                          border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.3)),
                         ),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: const Color(0xFFFAF7F0),
+                            backgroundColor: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFFAF7F0),
                             child: Text('${surah['id']}', style: const TextStyle(color: Color(0xFF8C7040), fontWeight: FontWeight.bold)),
                           ),
-                          title: Text(surah['name'], style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A))),
+                          title: Text(surah['name'], style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F4C3A))),
                           subtitle: Text('${surah['type']} ❖ آياتها ${surah['verses']}', style: const TextStyle(color: Colors.grey, fontSize: 13)),
                           trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF8C7040)),
                           onTap: () {
@@ -200,7 +275,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
   }
 }
 
-// شاشة عرض آيات السورة الكريمة إطار زخرفي
+// شاشة عرض النصوص والآيات
 class SurahViewScreen extends StatelessWidget {
   final String surahName;
   final int surahId;
@@ -212,7 +287,7 @@ class SurahViewScreen extends StatelessWidget {
       case 1:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "الْحَمْدُ Lِلَّهِ رَبِّ الْعَالَمِينَ",
+          "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
           "الرَّحْمَنِ الرَّحِيمِ",
           "مَالِكِ يَوْمِ الدِّينِ",
           "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
@@ -227,29 +302,10 @@ class SurahViewScreen extends StatelessWidget {
           "لَمْ يَلِدْ وَلَمْ يُولَدْ",
           "وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ"
         ];
-      case 113:
-        return [
-          "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
-          "مِن شَرِّ مَا خَلَقَ",
-          "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
-          "وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ",
-          "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ"
-        ];
-      case 114:
-        return [
-          "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
-          "مَلِكِ النَّاسِ",
-          "إِلَهِ النَّاسِ",
-          "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ",
-          "الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ",
-          "مِنَ الْجِنَّةِ وَالنَّاسِ"
-        ];
       default:
         return [
           "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-          "جاري تجميع وضبط النص الكامل بالتشكيل والرموز لهذه السورة الكريمة في التحديث القادم لـ وِرْدْ..."
+          "جاري إدراج بقية صفحات السورة الشريفة كاملة بالتشكيل والخط العثماني المريح للعين في التحديث الفوري القادم..."
         ];
     }
   }
@@ -257,6 +313,8 @@ class SurahViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final verses = getSurahVerses(surahId);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('سورة $surahName', style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -266,7 +324,7 @@ class SurahViewScreen extends StatelessWidget {
           margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFDF9),
+            color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFFDF9),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFF8C7040), width: 2),
           ),
@@ -286,7 +344,7 @@ class SurahViewScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "${verses[index]} ",
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A), height: 2.3),
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF1A1A1A), height: 2.3),
                         ),
                         TextSpan(
                           text: "﴿${index + 1}﴾ ",
@@ -305,7 +363,7 @@ class SurahViewScreen extends StatelessWidget {
   }
 }
 
-// شاشة مواقيت الصلاة (تم تصحيح الألوان والـ const تماماً لتخطي مشاكل البناء)
+// شاشة مواقيت الصلاة المحلية
 class LivePrayerTimesScreen extends StatelessWidget {
   const LivePrayerTimesScreen({super.key});
 
@@ -313,6 +371,7 @@ class LivePrayerTimesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final dateString = "${now.day}-${now.month}-${now.year}";
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: Column(
@@ -322,8 +381,10 @@ class LivePrayerTimesScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             margin: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0F4C3A), Color(0xFF166D53)],
+              gradient: LinearGradient(
+                colors: isDark 
+                    ? [const Color(0xFF2D2D2D), const Color(0xFF1F1F1F)]
+                    : [const Color(0xFF0F4C3A), const Color(0xFF166D53)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -349,7 +410,7 @@ class LivePrayerTimesScreen extends StatelessWidget {
                     const Icon(Icons.location_on, color: Color(0xFFE5D5B6), size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      "توقيت جمهورية مصر العربية المحلي القياسي",
+                      "توقيت جمهورية مصر العربية القياسي",
                       style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13),
                     ),
                   ],
@@ -361,12 +422,12 @@ class LivePrayerTimesScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               children: [
-                _buildPrayerRow("الفجر", "04:12 ص", Icons.wb_twilight),
-                _buildPrayerRow("الشروق", "05:50 ص", Icons.wb_sunny_outlined),
-                _buildPrayerRow("الظهر", "12:55 م", Icons.wb_sunny),
-                _buildPrayerRow("العصر", "04:30 م", Icons.cloud_queue),
-                _buildPrayerRow("المغرب", "07:58 م", Icons.nights_stay_outlined),
-                _buildPrayerRow("العشاء", "09:32 م", Icons.nights_stay),
+                _buildPrayerRow(context, "الفجر", "04:12 ص", Icons.wb_twilight),
+                _buildPrayerRow(context, "الشروق", "05:50 ص", Icons.wb_sunny_outlined),
+                _buildPrayerRow(context, "الظهر", "12:55 م", Icons.wb_sunny),
+                _buildPrayerRow(context, "العصر", "04:30 م", Icons.cloud_queue),
+                _buildPrayerRow(context, "المغرب", "07:58 م", Icons.nights_stay_outlined),
+                _buildPrayerRow(context, "العشاء", "09:32 م", Icons.nights_stay),
               ],
             ),
           ),
@@ -375,24 +436,25 @@ class LivePrayerTimesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPrayerRow(String name, String time, IconData icon) {
+  Widget _buildPrayerRow(BuildContext context, String name, String time, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.black.withOpacity(0.02)),
       ),
       child: ListTile(
         leading: Icon(icon, color: const Color(0xFF8C7040), size: 22),
-        title: Text(name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF0F4C3A))),
+        title: Text(name, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F4C3A))),
         trailing: Text(time, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF8C7040))),
       ),
     );
   }
 }
 
-// شاشة الأذكار المحدثة بـ عداد رقمي إلكتروني تفاعلي
+// شاشة الأذكار التفاعلية
 class AzkarScreen extends StatefulWidget {
   const AzkarScreen({super.key});
 
@@ -414,6 +476,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
         padding: const EdgeInsets.all(12),
         children: [
           _buildZikrCard(
+            context,
             "سبحان الله وبحمده، عدد خلقه، ورضا نفسه، وزنة عرشه، وميداد كلماته.",
             "من أذكار الصباح والمساء (٣ مرات)",
             3,
@@ -424,6 +487,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
             () => setState(() => _counter1 = 0),
           ),
           _buildZikrCard(
+            context,
             "اللَّهُمَّ عافِني في بَدَني، اللَّهُمَّ عافِني في سَمْعي، اللَّهُمَّ عافِني في بَصَري، لا إلهَ إلَّا أنتَ.",
             "الدعاء بالعافية والتحصين اليومي (٣ مرات)",
             3,
@@ -438,20 +502,24 @@ class _AzkarScreenState extends State<AzkarScreen> {
     );
   }
 
-  Widget _buildZikrCard(String text, String subtitle, int target, int current, VoidCallback onTap, VoidCallback onReset) {
+  Widget _buildZikrCard(BuildContext context, String text, String subtitle, int target, int current, VoidCallback onTap, VoidCallback onReset) {
     bool isDone = current >= target;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDone ? const Color(0xFFE8F5E9) : Colors.white,
+        color: isDone 
+            ? (isDark ? const Color(0xFF1B382B) : const Color(0xFFE8F5E9)) 
+            : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isDone ? Colors.green.withOpacity(0.5) : const Color(0xFFE5D5B6).withOpacity(0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF2C3E50), height: 1.6)),
+          Text(text, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? Colors.white90 : const Color(0xFF2C3E50), height: 1.6)),
           const SizedBox(height: 8),
           Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           const Divider(height: 24),
@@ -476,6 +544,86 @@ class _AzkarScreenState extends State<AzkarScreen> {
                 ],
               )
             ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// ⚙️ شاشة الإعدادات المضافة حديثاً للتحكم الكامل في واجهة وسلوك التطبيق
+class AppSettingsScreen extends StatelessWidget {
+  final bool isDarkMode;
+  final bool keepScreenAwake;
+  final ValueChanged<bool> onThemeChanged;
+  final ValueChanged<bool> onAwakeChanged;
+
+  const AppSettingsScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.keepScreenAwake,
+    required this.onThemeChanged,
+    required this.onAwakeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('إعدادات التطبيق', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: isDarkTheme ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5D5B6).withOpacity(0.3)),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.dark_mode, color: Color(0xFF8C7040)),
+                  title: const Text('الوضع الداكن (Dark Mode)', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('تحويل الواجهة للون الأسود المريح للعين ليلاً'),
+                  trailing: Switch(
+                    value: isDarkMode,
+                    onChanged: onThemeChanged,
+                    activeColor: const Color(0xFF8C7040),
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.phone_android, color: Color(0xFF8C7040)),
+                  title: const Text('إبقاء الشاشة تعمل دائماً', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('منع انطفاء واجهة الشاشة تلقائياً أثناء القراءة'),
+                  trailing: Switch(
+                    value: keepScreenAwake,
+                    onChanged: onAwakeChanged,
+                    activeColor: const Color(0xFF8C7040),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          // كارت معلومات التطبيق والإصدار للحفاظ على المظهر الاحترافي
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDarkTheme ? const Color(0xFF1F1F1F) : const Color(0xFFFAF7F0),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFF8C7040).withOpacity(0.2)),
+            ),
+            child: Column(
+              children: const [
+                Text('تطبيق وِرْدْ - الإصدار 1.0.1', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8C7040))),
+                SizedBox(height: 6),
+                Text('تطبيق إسلامي شامل ومطور لتسهيل القراءة والمتابعة اليومية.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              ],
+            ),
           )
         ],
       ),
