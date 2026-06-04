@@ -1,5 +1,5 @@
 name: quran_prayer_app
-description: "A Flutter Islamic Application"
+description: "A New Flutter Islamic Application"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # المكتبات الرسمية لتشغيل التواريخ، المواقيت، والمصحف كاملاً
   intl: ^0.19.0
   adhan: ^2.1.1
   quran: ^0.4.0
