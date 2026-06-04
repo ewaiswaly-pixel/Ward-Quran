@@ -507,7 +507,12 @@ class _AzkarScreenState extends State<AzkarScreen> {
       cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     }
 
-    Color textColor = isDark ? Colors.white90 : const Color(0xFF2C3E50);
+    Color textColor;
+    if (isDark) {
+      textColor = Colors.white90;
+    } else {
+      textColor = const Color(0xFF2C3E50);
+    }
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -518,7 +523,7 @@ class _AzkarScreenState extends State<AzkarScreen> {
         border: Border.all(color: isDone ? Colors.green.withOpacity(0.5) : const Color(0xFFE5D5B6).withOpacity(0.4)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        cross CrossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(text, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textColor, height: 1.6)),
           const SizedBox(height: 8),
