@@ -10,12 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
   
+  dependencies:
+  flutter:
+    sdk: flutter
+  
   intl: any
   adhan: any
-  quran:
-    git:
-      url: https://github.com/thewhitetulip/quran.git
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
