@@ -1,5 +1,4 @@
 name: ward_quran
-import 'package:flutter/widgets.dart';
 description: "A new Flutter project for Quran and Prayer Times."
 publish_to: 'none'
 version: 1.0.0+1
