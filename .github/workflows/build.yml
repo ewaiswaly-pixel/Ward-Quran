@@ -35,11 +35,15 @@ jobs:
       - name: Clean Project Cache
         run: flutter clean
 
-      # 5. جلب المكتبات والإصدارات الصحيحة بشكل نقي
+   # 5. جلب المكتبات والإصدارات الصحيحة
       - name: Install Dependencies
         run: flutter pub get
 
-      # 6. بناء ملف الـ APK النهائي بنجاح وبدون أي تدخل أو حقن خارجي
+      # الخطوة السحرية لإصلاح ملفات Gradle القديمة تلقائياً
+      - name: Repair and Upgrade Android Files
+        run: flutter create .
+
+      # 6. بناء ملف الـ APK النهائي بنجاح
       - name: Build Comprehensive APK
         run: flutter build apk --debug
 
