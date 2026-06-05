@@ -13,40 +13,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. جلب المشروع من جيت هاب
+      # 1. جلب المشروع
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. تهيئة لغة جافا الضرورية لبناء الأندرويد
+      # 2. تهيئة جافا
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # 3. تهيئة بيئة فلاتر المستقرة
+      # 3. تهيئة فلاتر ببيئة حديثة ومستقرة
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0' # إصدار مستقر ومتوافق مع مكتباتك
+          flutter-version: '3.22.0'
           channel: 'stable'
 
-      # 4. تنظيف الكاش والملفات المؤقتة تماماً لمنع تكرار الأخطاء القديمة
-      - name: Clean Project Cache
-        run: flutter clean
+      # 4. مسح المجلدات التالفة القديمة وإعادة إنشائها تلقائياً باسم صحيح
+      - name: Recreate Android Project Framework
+        run: |
+          rm -rf android
+          flutter create --platforms=android .
 
-   # 5. جلب المكتبات والإصدارات الصحيحة
+      # 5. جلب المكتبات بشكل نظيف
       - name: Install Dependencies
         run: flutter pub get
-
-      # الخطوة السحرية لإصلاح ملفات Gradle القديمة تلقائياً
-     
 
       # 6. بناء ملف الـ APK النهائي بنجاح
       - name: Build Comprehensive APK
         run: flutter build apk --debug
 
-      # 7. رفع ملف الـ APK الناتج لكي تتمكن من تحميله من صفحة الـ Actions
+      # 7. رفع ملف الـ APK للتحميل
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
