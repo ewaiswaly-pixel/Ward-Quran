@@ -40,8 +40,7 @@ jobs:
         run: flutter pub get
 
       # الخطوة السحرية لإصلاح ملفات Gradle القديمة تلقائياً
-      - name: Repair and Upgrade Android Files
-        run: flutter create .
+     
 
       # 6. بناء ملف الـ APK النهائي بنجاح
       - name: Build Comprehensive APK
