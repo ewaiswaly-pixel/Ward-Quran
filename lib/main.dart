@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart'; // هذا السطر هو الحل الجذري لخطأ الصورة AAAA20
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide TextDirection;
+import 'package:flutter/widgets.dart' show TextDirection, Widget, StatelessWidget, BuildContext, State, StatefulWidget, EdgeInsets, Padding, SizedBox, ListView, Card, ListTile, CircleAvatar, Text, Icon, Icons, BottomNavigationBar, BottomNavigationBarItem, Scaffold, AppBar, Center, Column, MainAxisAlignment, ElevatedButton, Navigator, MaterialPageRoute, ThemeData, Colors, GestureDetector;
 import 'package:adhan/adhan.dart';
 import 'package:intl/intl.dart';
 
