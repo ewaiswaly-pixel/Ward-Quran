@@ -1,5 +1,5 @@
 name: ward_quran
-description: "A New Flutter Islamic Application"
+description: "A new Flutter project for Quran and Prayer Times."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,13 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  dependencies:
-  flutter:
-    sdk: flutter
-  
+
   intl: any
   adhan: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
