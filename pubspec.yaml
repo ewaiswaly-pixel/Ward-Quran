@@ -12,7 +12,9 @@ dependencies:
   
   intl: any
   adhan: any
-  quran: ^1.2.9
+  quran:
+    git:
+      url: https://github.com/thewhitetulip/quran.git
 
 dev_dependencies:
   flutter_test:
